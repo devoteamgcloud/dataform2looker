@@ -1,4 +1,3 @@
-
 class LookML:
     def __init__(self, columns, name, table_sql):
         self.columns = columns
@@ -20,18 +19,18 @@ class LookML:
         lookml_code = f"view: {self.name} {{\n"
 
         # Add derived table logic (assuming Dataform-style SQL)
-        lookml_code += f"  derived_table: {{\n"
+        lookml_code += "  derived_table: {\n"
         lookml_code += f"    sql: {self.table_sql} ;;\n"
-        lookml_code += f"  }}\n\n"
+        lookml_code += "  }\n\n"
 
         # Define dimensions from columns
         for col in self.columns:
             lookml_code += f"  dimension: {col} {{\n"
-            lookml_code += f"    type: string\n"  # TO BE ADJUSTED
+            lookml_code += "    type: string\n"  # TO BE ADJUSTED
             lookml_code += f"    sql: ${{TABLE}}.{col} ;;\n"
-            lookml_code += f"  }}\n\n"
+            lookml_code += "  }\n\n"
 
-        lookml_code += f"}}\n"
+        lookml_code += "}\n"
 
         return lookml_code
 
