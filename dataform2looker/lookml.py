@@ -1,10 +1,10 @@
-class LookML:
-    def __init__(self, columns, name, table_sql):
+class Lookml:
+    def __init__(self, columns: list[str], name: str, table_sql: str) -> None:
         self.columns = columns
         self.name = name
         self.table_sql = table_sql
 
-    def Generate(self):
+    def generate(self) -> str:
         """
         Generates LookML code based on the provided table_sql.
 
@@ -47,6 +47,6 @@ if __name__ == "__main__":
     GROUP BY 1, 2
     """
 
-    lookml_obj = LookML(columns, name, table_sql)
-    lookml_code = lookml_obj.Generate()
+    lookml_obj = Lookml(columns, name, table_sql)
+    lookml_code = lookml_obj.generate()
     print(lookml_code)
