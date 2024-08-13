@@ -1,4 +1,4 @@
-class Lookml:
+class LookML:
     def __init__(self, columns: list[str], name: str, table_sql: str) -> None:
         self.columns = columns
         self.name = name
@@ -47,6 +47,6 @@ if __name__ == "__main__":
     GROUP BY 1, 2
     """
 
-    lookml_obj = Lookml(columns, name, table_sql)
+    lookml_obj = LookML(columns, name, table_sql)
     lookml_code = lookml_obj.generate()
     print(lookml_code)
