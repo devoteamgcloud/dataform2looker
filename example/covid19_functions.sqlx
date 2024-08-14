@@ -1,0 +1,40 @@
+config {
+    type: "table",
+    database: "sbx-edgar-dataform",
+    schema: "austin_bikeshare",
+    tags: ["functions"]
+    columns: {
+
+}
+
+js {
+    function sha_256(field) {
+        return `
+    SHA256(CAST(${field} AS STRING))
+    `;
+    }
+}
+
+js {
+    function cast_int(field) {
+        return `CAST(${field} as numeric) +50
+    `;
+    }
+}
+
+SELECT
+  ${sha_256("geo_id")} AS geo_id_hashed,
+  SUM( ${cast_int("deaths")} ) AS sum_deaths
+FROM
+  ${ref("covid19_ecdc_eu", "covid_19_geographic_distribution_worldwide")}
+GROUP BY
+  geo_id_hashed
+ORDER BY geo_id_hashed
+
+post_operations {
+
+  CREATE OR REPLACE ROW ACCESS POLICY filter_non_null_values
+ON ${self()}
+GRANT TO ('user:edgar.ochoa@devoteam.com')
+FILTER USING (geo_id_hashed IS NOT NULL);
+}
