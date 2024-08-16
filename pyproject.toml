@@ -6,8 +6,10 @@ authors = ["papikiu <khachatur.papikyan@devoteam.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.10"
 requests = "^2.32.3"
+google-cloud = "^0.34.0"
+bigquery = "^0.0.41"
 
 
 [build-system]
