@@ -3,12 +3,35 @@ import os
 
 from google.cloud import bigquery
 
+LOOKER_DTYPE_MAP = {
+    "INT64": "number",
+    "INTEGER": "number",
+    "FLOAT": "number",
+    "FLOAT64": "number",
+    "NUMERIC": "number",
+    "BIGNUMERIC": "number",
+    "BOOLEAN": "yesno",
+    "STRING": "string",
+    "TIMESTAMP": "timestamp",
+    "DATETIME": "datetime",
+    "DATE": "date",
+    "TIME": "string",
+    "BOOL": "yesno",
+    "ARRAY": "string",
+    "GEOGRAPHY": "string",
+    "BYTES": "string",
+}
+
 
 class Column:
     def __init__(self, description: str, type: str, name: str) -> None:
         self.description = description
         self.type = type
         self.name = name
+        self.looker_type = self.__map_bigquery_to_looker_type()
+
+    def __map_bigquery_to_looker_type(self) -> str:
+        return LOOKER_DTYPE_MAP.get(self.type, "string")
 
 
 class BigqueryTable:
@@ -63,7 +86,7 @@ class LookML:
             lookml_views += f"  sql_table_name: {table_id} ;;\n\n"
             for column in columns:
                 lookml_views += f"  dimension: {column.name} {{\n"
-                lookml_views += f"    type: {column.type}\n"
+                lookml_views += f"    type: {column.looker_type}\n"
                 lookml_views += f'    description: "{column.description}"\n'
                 lookml_views += "  }\n\n"
             lookml_views += "}\n\n"
