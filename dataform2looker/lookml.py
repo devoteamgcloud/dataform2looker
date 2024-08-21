@@ -1,65 +1,15 @@
 import json
 import os
-
-from google.cloud import bigquery
-
-LOOKER_DTYPE_MAP = {
-    "INT64": "number",
-    "INTEGER": "number",
-    "FLOAT": "number",
-    "FLOAT64": "number",
-    "NUMERIC": "number",
-    "BIGNUMERIC": "number",
-    "BOOLEAN": "yesno",
-    "STRING": "string",
-    "TIMESTAMP": "timestamp",
-    "DATETIME": "datetime",
-    "DATE": "date",
-    "TIME": "string",
-    "BOOL": "yesno",
-    "ARRAY": "string",
-    "GEOGRAPHY": "string",
-    "BYTES": "string",
-}
-
-
-class Column:
-    def __init__(self, description: str, type: str, name: str) -> None:
-        self.description = description
-        self.type = type
-        self.name = name
-        self.looker_type = self.__map_bigquery_to_looker_type()
-
-    def __map_bigquery_to_looker_type(self) -> str:
-        return LOOKER_DTYPE_MAP.get(self.type, "string")
-
-
-class BigqueryTable:
-    def __init__(self, table_id: str) -> None:
-        self.table_id = table_id
-        self.columns = self.__create_columns_array()
-
-    def __create_columns_array(self) -> list[Column]:
-        client = bigquery.Client()
-        table = client.get_table(self.table_id)
-        columns = [
-            Column(field.description, field.field_type, field.name)
-            for field in table.schema
-        ]
-        return columns
-
-    def get_number_of_columns(self) -> int:
-        return len(self.columns)
-
+from database_mappers import BigqueryTable
 
 class LookML:
-    def __init__(self, path: str) -> None:
+    _database_types = ["bq"]
+
+    def __init__(self, path: str, database_type = "bq") -> None:
         self.path = path
-        self.__tables_list = self.__read_json_into_list_of_tables()
+        self.database_type = database_type
+        self.tables_list = self.__get_list_of_tables()
         self.__table_id_list = self.__create_list_of_table_ids()
-        self.__bigquery_table_info = (
-            self.__create_bigquery_table_id_to_columns_mapping()
-        )
         self.__lookml_views_string = self.__generate_lookml_views()
 
     def create_lookml_view_files(self) -> None:
@@ -80,16 +30,16 @@ class LookML:
 
     def __generate_lookml_views(self) -> str:
         lookml_views = ""
-        for table_id, columns in self.__bigquery_table_info.items():
-            view_name = table_id.split(".")[-1]
-            lookml_views += f"view: {view_name} {{\n"
-            lookml_views += f"  sql_table_name: {table_id} ;;\n\n"
-            for column in columns:
-                lookml_views += f"  dimension: {column.name} {{\n"
-                lookml_views += f"    type: {column.looker_type}\n"
-                lookml_views += f'    description: "{column.description}"\n'
-                lookml_views += "  }\n\n"
-            lookml_views += "}\n\n"
+        # for table_id, columns in self.__bigquery_table_info.items():
+        #     view_name = table_id.split(".")[-1]
+        #     lookml_views += f"view: {view_name} {{\n"
+        #     lookml_views += f"  sql_table_name: {table_id} ;;\n\n"
+        #     for column in columns:
+        #         lookml_views += f"  dimension: {column.name} {{\n"
+        #         lookml_views += f"    type: {column.looker_type}\n"
+        #         lookml_views += f'    description: "{column.description}"\n'
+        #         lookml_views += "  }\n\n"
+        #     lookml_views += "}\n\n"
         return lookml_views
 
     def __create_bigquery_table_id_to_columns_mapping(self) -> dict[list[Column]]:
@@ -99,23 +49,20 @@ class LookML:
         }
         return bigquery_table_info
 
-    def __create_list_of_table_ids(self) -> list[str]:
-        table_id_list = [
-            (
-                table["target"]["database"]
-                + "."
-                + table["target"]["schema"]
-                + "."
-                + table["target"]["name"]
-            )
-            for table in self.__tables_list
-        ]
-        return table_id_list
+    def __create_list_of_table_ids(self) -> list:
+        if self.database_type == "bq":
+            table_list = [
+                BigqueryTable(f"{table["target"]["database"]}.{table["target"]["schema"]}.{table["target"]["name"]}")
+                for table in self.__tables_list
+            ]
+            
+        return table_list
 
-    def __read_json_into_list_of_tables(self) -> list[dict]:
+    def __get_list_of_tables(self) -> list[dict]:
         with open(self.path, "r") as file:
             data = json.load(file)
             tables = data["tables"]
+            # TODO filter for tags, there should be a paremeter for this
             return tables
 
 
