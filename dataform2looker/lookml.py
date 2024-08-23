@@ -1,39 +1,61 @@
 import json
 import os
+
+import lkml
 from database_mappers import GenericTable
 
 
 class LookML:
-    
-    def __init__(self, path: str, db_type: str, views_target_folder: str)-> None:
+    def __init__(self, path: str, db_type: str, views_target_folder: str) -> None:
         self.path = path
         self.db_type = db_type
-        self.tables_list = [
-            GenericTable(table_id, db_type)
-            for table_id in self.___get_table_ids()
-        ] #TODO Move it to a function Khachatur
-        self.lookml_template = None # TODO either use Jinja or use the example reference
-        self.views_target_folder = None 
+        self.tables_list = self.__create_tables()
+        self.lookml_template = self.__generate_lookml_templates()
+        self.views_target_folder = views_target_folder
 
-    def __khachatur_fun1(self)->None:
-        # This function needs to save all of the templates that exist IN the LookML class
-        pass
+    def save_lookml_views(self) -> None:
+        for index, template in enumerate(self.lookml_template):
+            file_path = (
+                f"{self.views_target_folder}/"
+                f"{self.tables_list[index].table.table_name}.view.lkml"
+            )
+            with open(file_path, "w") as f:
+                f.write(template)
+        return print(
+            f"LookML view files successfully created in folder "
+            f"'{self.views_target_folder}'"
+        )
 
-    def __khachatur_fun1(self)->None:
-        # This function generates string of all of the templates 
-        # that exists in the class either from template or a python lib
-        pass
+    def __generate_lookml_templates(self) -> list[str]:
+        lookml_views_list = []
+        for table in self.tables_list:
+            dimensions_list = [
+                {
+                    "type": f"{column.looker_type}",
+                    "description": f"{column.description}",
+                    "name": f"{column.name}",
+                }
+                for column in table.table.columns
+            ]
+            lookml_view = {
+                "view": {
+                    "name": f"{table.table.table_name}",
+                    "sql_table_name": f"{table.table.table_id}",
+                    "dimensions": dimensions_list,
+                }
+            }
+            lookml_views_list.append(lkml.dump(lookml_view))
+        return lookml_views_list
 
-    def __get_list_of_tables(self) -> list[dict]:
-        with open(self.path, "r") as file:
-            data = json.load(file)
-            tables = data["tables"]
-            # TODO filter for tags, there should be a paremeter for this
-            return tables
-        
-    def ___get_table_ids(self) -> list[str]:
+    def __create_tables(self) -> list[GenericTable]:
+        tables_list = [
+            GenericTable(table_id, self.db_type) for table_id in self.__get_table_ids()
+        ]
+        return tables_list
+
+    def __get_table_ids(self) -> list[str]:
         table_id_list = [
-            f"{table['database']}.{table['schema']}.{table['name']}"
+            f"{table['target']['database']}.{table['target']['schema']}.{table['target']['name']}"
             for table in self.__get_list_of_tables()
         ]
         return table_id_list
@@ -42,10 +64,13 @@ class LookML:
         with open(self.path, "r") as file:
             data = json.load(file)
             tables = data["tables"]
-            # TODO filter for tags, there should be a paremeter for this
             return tables
 
-if main="main"
-    
-    # Initialize LookML Class
-    # Save the data to a path using the intialized class
+
+if __name__ == "__main__":
+    lookml_directory_name = "views"
+    os.makedirs(lookml_directory_name, exist_ok=True)
+    lookml_object = LookML(
+        "./result.json", "BigQuery", f"{os.getcwd()}/{lookml_directory_name}"
+    )
+    lookml_object.save_lookml_views()
