@@ -1,118 +1,66 @@
 import json
 import os
 
-from google.cloud import bigquery
-
-LOOKER_DTYPE_MAP = {
-    "INT64": "number",
-    "INTEGER": "number",
-    "FLOAT": "number",
-    "FLOAT64": "number",
-    "NUMERIC": "number",
-    "BIGNUMERIC": "number",
-    "BOOLEAN": "yesno",
-    "STRING": "string",
-    "TIMESTAMP": "timestamp",
-    "DATETIME": "datetime",
-    "DATE": "date",
-    "TIME": "string",
-    "BOOL": "yesno",
-    "ARRAY": "string",
-    "GEOGRAPHY": "string",
-    "BYTES": "string",
-}
-
-
-class Column:
-    def __init__(self, description: str, type: str, name: str) -> None:
-        self.description = description
-        self.type = type
-        self.name = name
-        self.looker_type = self.__map_bigquery_to_looker_type()
-
-    def __map_bigquery_to_looker_type(self) -> str:
-        return LOOKER_DTYPE_MAP.get(self.type, "string")
-
-
-class BigqueryTable:
-    def __init__(self, table_id: str) -> None:
-        self.table_id = table_id
-        self.columns = self.__create_columns_array()
-
-    def __create_columns_array(self) -> list[Column]:
-        client = bigquery.Client()
-        table = client.get_table(self.table_id)
-        columns = [
-            Column(field.description, field.field_type, field.name)
-            for field in table.schema
-        ]
-        return columns
-
-    def get_number_of_columns(self) -> int:
-        return len(self.columns)
+import lkml
+from database_mappers import GenericTable
 
 
 class LookML:
-    def __init__(self, path: str) -> None:
+    def __init__(self, path: str, db_type: str, views_target_folder: str) -> None:
         self.path = path
-        self.__tables_list = self.__read_json_into_list_of_tables()
-        self.__table_id_list = self.__create_list_of_table_ids()
-        self.__bigquery_table_info = (
-            self.__create_bigquery_table_id_to_columns_mapping()
-        )
-        self.__lookml_views_string = self.__generate_lookml_views()
+        self.db_type = db_type
+        self.tables_list = self.__create_tables()
+        self.lookml_template = self.__generate_lookml_templates()
+        self.views_target_folder = views_target_folder
 
-    def create_lookml_view_files(self) -> None:
-        lookml_directory_name = "views"
-        cwd = os.getcwd()
-        os.makedirs(lookml_directory_name, exist_ok=True)
-        view_definitions = self.__lookml_views_string.split("view: ")[1:]
-        for view_def in view_definitions:
-            view_name = view_def.split(" {")[0]
-            file_name = f"{view_name}.view.lkml"
-            file_path = os.path.join(lookml_directory_name, file_name)
+    def save_lookml_views(self) -> None:
+        for index, template in enumerate(self.lookml_template):
+            file_path = (
+                f"{self.views_target_folder}/"
+                f"{self.tables_list[index].table.table_name}.view.lkml"
+            )
             with open(file_path, "w") as f:
-                f.write("view: " + view_def)
+                f.write(template)
         return print(
             f"LookML view files successfully created in folder "
-            f"'{cwd}/{lookml_directory_name}'."
+            f"'{self.views_target_folder}'"
         )
 
-    def __generate_lookml_views(self) -> str:
-        lookml_views = ""
-        for table_id, columns in self.__bigquery_table_info.items():
-            view_name = table_id.split(".")[-1]
-            lookml_views += f"view: {view_name} {{\n"
-            lookml_views += f"  sql_table_name: {table_id} ;;\n\n"
-            for column in columns:
-                lookml_views += f"  dimension: {column.name} {{\n"
-                lookml_views += f"    type: {column.looker_type}\n"
-                lookml_views += f'    description: "{column.description}"\n'
-                lookml_views += "  }\n\n"
-            lookml_views += "}\n\n"
-        return lookml_views
+    def __generate_lookml_templates(self) -> list[str]:
+        lookml_views_list = []
+        for table in self.tables_list:
+            dimensions_list = [
+                {
+                    "type": f"{column.looker_type}",
+                    "description": f"{column.description}",
+                    "name": f"{column.name}",
+                }
+                for column in table.table.columns
+            ]
+            lookml_view = {
+                "view": {
+                    "name": f"{table.table.table_name}",
+                    "sql_table_name": f"{table.table.table_id}",
+                    "dimensions": dimensions_list,
+                }
+            }
+            lookml_views_list.append(lkml.dump(lookml_view))
+        return lookml_views_list
 
-    def __create_bigquery_table_id_to_columns_mapping(self) -> dict[list[Column]]:
-        bigquery_table_info = {
-            table_id: BigqueryTable(table_id).columns
-            for table_id in self.__table_id_list
-        }
-        return bigquery_table_info
+    def __create_tables(self) -> list[GenericTable]:
+        tables_list = [
+            GenericTable(table_id, self.db_type) for table_id in self.__get_table_ids()
+        ]
+        return tables_list
 
-    def __create_list_of_table_ids(self) -> list[str]:
+    def __get_table_ids(self) -> list[str]:
         table_id_list = [
-            (
-                table["target"]["database"]
-                + "."
-                + table["target"]["schema"]
-                + "."
-                + table["target"]["name"]
-            )
-            for table in self.__tables_list
+            f"{table['target']['database']}.{table['target']['schema']}.{table['target']['name']}"
+            for table in self.__get_list_of_tables()
         ]
         return table_id_list
 
-    def __read_json_into_list_of_tables(self) -> list[dict]:
+    def __get_list_of_tables(self) -> list[dict]:
         with open(self.path, "r") as file:
             data = json.load(file)
             tables = data["tables"]
@@ -120,5 +68,9 @@ class LookML:
 
 
 if __name__ == "__main__":
-    lookml_object = LookML("./result.json")
-    lookml_object.create_lookml_view_files()
+    lookml_directory_name = "views"
+    os.makedirs(lookml_directory_name, exist_ok=True)
+    lookml_object = LookML(
+        "./result.json", "BigQuery", f"{os.getcwd()}/{lookml_directory_name}"
+    )
+    lookml_object.save_lookml_views()
