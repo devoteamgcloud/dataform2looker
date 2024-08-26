@@ -24,11 +24,11 @@ pip install <folder_location>
 You can install the library from a repository using:
 
 ```bash
-pip install git+ssh://git@github.com:devoteamgcloud/dataform2looker.git
+pip install git+ssh://git@github.com:devoteamgcloud/dataform2looker.git@branch_name
 ```
 OR
 ```bash
-pip install git+https://github.com/devoteamgcloud/dataform2looker.git
+pip install git+https://github.com/devoteamgcloud/dataform2looker.git@branch_name
 ```
 
 # TODO: update from here on.
