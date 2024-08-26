@@ -1,9 +1,31 @@
+[tool]
+
 [tool.poetry]
-name = "dataform2looker"
-version = "0.1.0"
-description = "A package to generate Looker view files automatically from dataform models."
 authors = ["papikiu <khachatur.papikyan@devoteam.com>"]
+classifiers = [
+  'Development Status :: 2 - Pre-Alpha',
+  'Intended Audience :: Developers',
+  'License :: OSI Approved :: MIT License',
+  'Natural Language :: English',
+  'Programming Language :: Python :: 3',
+  'Programming Language :: Python :: 3.8',
+  'Programming Language :: Python :: 3.9',
+  'Programming Language :: Python :: 3.10',
+  'Programming Language :: Python :: 3.11',
+  'Programming Language :: Python :: 3.12',
+]
+description = "A package to generate Looker view files automatically from dataform models."
+license = "MIT"
+name = "dataform2looker"
+packages = [
+  {include = "dataform2looker"},
+]
 readme = "README.md"
+version = "0.0.1"
+
+[build-system]
+build-backend = "poetry.masonry.api"
+requires = ["poetry>=0.12"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -11,10 +33,12 @@ requests = "^2.32.3"
 google-cloud = "^0.34.0"
 bigquery = "^0.0.41"
 
+[tool.ruff.lint]
+select = ["E", "ANN", "I001", "N"]
+ignore = ["D417", "ANN002", "ANN003", "ANN1"]
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 [tool.ruff]
 exclude = [
@@ -46,15 +70,7 @@ exclude = [
     "venv",
     ".env",
 ]
-
 indent-width = 4
-
-[tool.ruff.lint]
-select = ["E", "ANN", "I001", "N"]
-ignore = ["D417", "ANN002", "ANN003", "ANN1"]
-
-[tool.ruff.lint.pydocstyle]
-convention = "google"
 
 [tool.ruff.format]
 indent-style = "space"
