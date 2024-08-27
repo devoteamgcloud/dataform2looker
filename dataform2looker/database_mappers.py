@@ -1,5 +1,6 @@
-from errors import UnsupportedDatabaseTypeError
 from google.cloud import bigquery
+
+from dataform2looker.errors import UnsupportedDatabaseTypeError
 
 
 class Column:

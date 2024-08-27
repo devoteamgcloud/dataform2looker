@@ -1,5 +1,4 @@
 import argparse
-import glob
 import logging
 import os
 import subprocess
@@ -7,7 +6,7 @@ import sys
 from collections.abc import Sequence
 from pathlib import Path
 
-from dataform2looker import LookML
+from dataform2looker.lookml import LookML
 
 
 def _generate_view(lookml_directory_name: str, target_dir: str) -> int:
@@ -36,7 +35,6 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     argv = argv if argv is not None else sys.argv[1:]
     parser = argparse.ArgumentParser(
-        prog="d2l",
         description="Generate Looker view files from dataform models",
     )
 
@@ -47,7 +45,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         help="Path to the views file or directory containing views.",
     )
     parser.add_argument(
-        "--target-dir",
+        "-target-dir",
         type=Path,
         default=script_dir.parent / "views" / "output",
         help="Target directory for looker views. Default is 'views/output'.",

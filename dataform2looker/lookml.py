@@ -2,7 +2,8 @@ import json
 import os
 
 import lkml
-from database_mappers import GenericTable
+
+from dataform2looker.database_mappers import GenericTable
 
 
 class LookML:

@@ -4,7 +4,6 @@ database_mappers
 errors
 google-cloud-bigquery
 argparse
-glob
 logging
 os
 subprocess
