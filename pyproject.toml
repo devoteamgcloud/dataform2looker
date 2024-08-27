@@ -1,7 +1,10 @@
 [tool]
 
 [tool.poetry]
-authors = ["papikiu <khachatur.papikyan@devoteam.com>"]
+authors = ["Khachatur Papikyan <khachatur.papikyan@devoteam.com>",
+           "Edgar Ochoa <edgar.ochoa@devoteam.com>",
+           "Arturo Voltattorni <arturo.voltattorni@devoteam.com>",
+           "Alexandros Kyrloglou <alexandros.kyrloglou@devoteam.com>"]
 classifiers = [
   'Development Status :: 2 - Pre-Alpha',
   'Intended Audience :: Developers',
