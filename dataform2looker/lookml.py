@@ -29,19 +29,61 @@ class LookML:
     def __generate_lookml_templates(self) -> list[str]:
         lookml_views_list = []
         for table in self.tables_list:
-            dimensions_list = [
-                {
-                    "type": f"{column.looker_type}",
-                    "description": f"{column.description}",
-                    "name": f"{column.name}",
-                }
-                for column in table.table.columns
-            ]
+            dimensions_list = []
+            datetime_list = []
+            date_list = []
+            for column in table.table.columns:
+                match column.looker_type:
+                    case "timestamp" | "datetime":
+                        datetime_list.append(
+                            {
+                                "type": "time",
+                                "description": f"{column.description}",
+                                "name": f"{column.name}",
+                                "datatype": f"{column.looker_type}",
+                                "timeframes": [
+                                    "raw",
+                                    "time",
+                                    "hour",
+                                    "date",
+                                    "week",
+                                    "month",
+                                    "quarter",
+                                    "year",
+                                ],
+                            }
+                        )
+                    case "date":
+                        date_list.append(
+                            {
+                                "type": "time",
+                                "description": f"{column.description}",
+                                "name": f"{column.name}",
+                                "datatype": f"{column.looker_type}",
+                                "timeframes": [
+                                    "raw",
+                                    "date",
+                                    "week",
+                                    "month",
+                                    "quarter",
+                                    "year",
+                                ],
+                            }
+                        )
+                    case _:
+                        dimensions_list.append(
+                            {
+                                "type": f"{column.looker_type}",
+                                "description": f"{column.description}",
+                                "name": f"{column.name}",
+                            }
+                        )
             lookml_view = {
                 "view": {
                     "name": f"{table.table.table_name}",
                     "sql_table_name": f"{table.table.table_id}",
                     "dimensions": dimensions_list,
+                    "dimension_group": datetime_list + date_list,
                 }
             }
             lookml_views_list.append(lkml.dump(lookml_view))
