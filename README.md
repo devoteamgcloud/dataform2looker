@@ -1,12 +1,28 @@
 # dataform2looker
+This repository provides a tool to generate LookML models from Dataform models.
+
+## Installation
+
+### From the repository
+You can install the library using:
+
+```bash
+pip install git+ssh://git@github.com:devoteamgcloud/dataform2looker.git@branch_name --force-reinstall
+```
+OR
+```bash
+pip install git+https://github.com/devoteamgcloud/dataform2looker.git@branch_name --force-reinstall
+```
+
+The `--force-reinstall` flag makes certain that the newest iteration of the code will be installed even if the version number has not been updated.
 
 ## Usage
 ### CLI Commands
 You can use the following CLI commands to generate LookML models:
 
-```bash 
-# Generate LookML views using default values: 
-#    dir =  ./views 
+```bash
+# Generate LookML views using default values:
+#    dir =  ./views
 #    target_dir = ./views/output
 python generator.py
 
@@ -27,3 +43,6 @@ Replace <path/to/your/dataform/model.py> with the actual path to your Dataform m
 - `--target-dir`: Target directory for the output LookML files. Defaults to the current directory.
 - `--pre-commit`: Run pre-commit formatting checks on the output files.
 - `--verbose`: Enable verbose logging for debugging purposes.
+
+## License
+This project is licensed under the MIT License.
