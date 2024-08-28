@@ -31,13 +31,12 @@ requires = ["poetry>=0.12"]
 Homepage = "https://github.com/devoteamgcloud/dataform2looker/"
 
 [tool.poetry.dependencies]
-python = "^3.10"
-bigquery = "^0.0.41"
+python = "3.10"
 lkml = "1.3.5"
 google-cloud-bigquery = "3.25.0"
 
-[tool.poetry.extras]
-bigquery = ["google-cloud-bigquery"]
+#[tool.poetry.extras] TODO: add when other databases are implemented
+#bigquery = ["google-cloud-bigquery"]
 
 [tool.ruff.lint]
 select = ["E", "ANN", "I001", "N"]
