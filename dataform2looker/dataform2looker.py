@@ -19,9 +19,7 @@ def _generate_view(lookml_directory_name: str, target_dir: str) -> int:
     logging.info(f" Generating view for: {lookml_directory_name}")
     try:
         # os.makedirs(lookml_directory_name, exist_ok=True)
-        lookml_object = LookML(
-            target_dir + "/result.json", "BigQuery", lookml_directory_name
-        )
+        lookml_object = LookML(lookml_directory_name, "BigQuery", target_dir)
         lookml_object.save_lookml_views()
         return 0
     except subprocess.CalledProcessError as e:
