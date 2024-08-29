@@ -65,10 +65,6 @@ def main(argv: Sequence[str] | None = None) -> int:
     if input_path.is_file():
         logging.info(f" Processing file: {input_path}")
         return _generate_view(str(input_path), str(target_dir))
-    elif input_path.is_dir():
-        for file in input_path.glob("*.py"):
-            logging.info(f" Processing file: {file}")
-            return _generate_view(str(file), str(target_dir))
     else:
         logging.error("The provided path is neither a file nor a directory")
         sys.exit(1)
