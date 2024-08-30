@@ -31,6 +31,7 @@ requires = ["poetry>=0.12"]
 python = "^3.10"
 lkml = "1.3.5"
 google-cloud-bigquery = "3.25.0"
+PyGithub = "^2.3.0"
 
 [tool.ruff.lint]
 select = ["E", "ANN", "I001", "N"]
