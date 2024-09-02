@@ -22,7 +22,7 @@ class LookML:
         self.views_target_folder = views_target_folder
         # TODO finish setting up tags to be used as filters
         # when getting the list of tables
-        self.tags = set(tags)
+        self.tags = set(tags or [])
 
     def save_lookml_views(self) -> None:
         for table_name, table_template in self.lookml_templates.items():
