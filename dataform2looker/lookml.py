@@ -51,7 +51,7 @@ class LookML:
         tables_list = [GenericTable(table_id, self.db_type) for table_id in tables_ids]
         return tables_list
 
-    def __get_list_of_table_ids(self) -> list[dict]:
+    def __get_list_of_table_ids(self) -> list[str]:
         with open(self.path, "r") as file:
             data = json.load(file)
             tables = data["tables"]
