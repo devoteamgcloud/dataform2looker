@@ -3,7 +3,8 @@ import logging
 import os
 
 import lkml
-from database_mappers import GenericTable
+
+from .database_mappers import GenericTable
 
 
 class LookML:

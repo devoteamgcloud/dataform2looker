@@ -1,5 +1,6 @@
-from exceptions import UnsupportedDatabaseTypeError
 from google.cloud import bigquery
+
+from .exceptions import UnsupportedDatabaseTypeError
 
 
 class Column:
