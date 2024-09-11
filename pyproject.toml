@@ -34,14 +34,31 @@ Homepage = "https://github.com/devoteamgcloud/dataform2looker/"
 python = "^3.10"
 lkml = "1.3.5"
 google-cloud-bigquery = "3.25.0"
-pytest = "8.3.2"
 
 #[tool.poetry.extras] TODO: add when other databases are implemented
 #bigquery = ["google-cloud-bigquery"]
 
 [tool.ruff.lint]
-select = ["E", "ANN", "I001", "N"]
-ignore = ["D417", "ANN002", "ANN003", "ANN1"]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+    "ANN",
+    # flake8-annotations
+    "N",
+    "PIE",
+    ]
+# ignore = ["F401"]
+
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
