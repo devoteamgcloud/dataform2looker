@@ -56,7 +56,7 @@ class Column:
         "date": ["raw", "date", "week", "month", "quarter", "year"],
     }
 
-    def __init__(self, description: str, field_type: str, name: str) -> None:
+    def __init__(self, name: str, description: str, field_type: str) -> None:
         """Initializes the `Column` object.
 
         Args:
@@ -75,7 +75,8 @@ class Column:
         self.field_type = field_type
         assert (
             self.field_type in self._DIMENSION_TYPE_MAP
-        ), f"Invalid field type, use one of {self._DIMENSION_TYPE_MAP.keys()}"
+        ), f"Invalid field type, use one of {self._DIMENSION_TYPE_MAP.keys()},\
+            got {self.field_type}"
         self.dimension_type = self._DIMENSION_TYPE_MAP[self.field_type]
         self.column_dictionary = {
             "name": self.name,
@@ -85,7 +86,7 @@ class Column:
         }
         if self.dimension_type == "time_dimension_group":
             self.column_dictionary["timeframes"] = self._DIMENSION_GROUP_MAP[
-                self.dimension_type
+                self.field_type
             ]
             self.column_dictionary["datatype"] = self.dimension_type
 
@@ -120,10 +121,12 @@ class GenericTable:
         """  # noqa: E501
         if db_type != "bigquery":
             raise UnsupportedDatabaseTypeError(db_type)
-        self.__table = BigqueryTable(table_id)
+        self.__table = BigQueryTable(table_id)
         self.table_id = table_id
         self.table_name = self.__table.table_name
         self.__db_type = db_type
+        # TODO implement self.description = self.__table.description
+        # This is not implemented at the moment lkml views don't support descriptions
         # At the moment the dictionary for views and dimensions are built
         # this is because the lkml lib requires the dict
         # in case something different is used then we would need to
@@ -153,11 +156,10 @@ class GenericTable:
         }
 
 
-class BigqueryTable:
+class BigQueryTable:
     """Base Table class for representing BigQuery tables and their column information.
 
     Attributes:
-        _LOOKER_TYPE_MAP (dict): A mapping of BigQuery data types to their corresponding Looker types.
         table_id (str): The full ID of the BigQuery table (e.g., "project.dataset.table").
         table_name (str): The name of the BigQuery table (extracted from `table_id`).
         columns (list[Column]): A list of `Column` objects representing the table's columns.
@@ -205,6 +207,8 @@ class BigqueryTable:
         self.table_id = table_id
         self.table_name = table_id.split(".")[-1]
         self.columns = self.__get_columns()
+        # TODO Implement description
+        # self.description = self.__get_table_description()
 
     def __get_columns(self) -> list[Column]:
         """Retrieves and structures column information from a BigQuery table.
@@ -222,9 +226,9 @@ class BigqueryTable:
         table = client.get_table(self.table_id)
         columns = [
             Column(
-                field.description,
-                field.name,
-                self.__map_to_looker_type(field.field_type),
+                name=field.name,
+                description=field.description,
+                field_type=self.__map_to_looker_type(field.field_type),
             )
             for field in table.schema
         ]
