@@ -19,3 +19,6 @@ class TestBigQueryTable:
         Verifies that the attributes of the created `BigQueryTable` object match the expected values.
         """  # noqa: E501
         assert my_bq_table.table_id == bq_table_id
+
+
+# TODO add other tests for BigQueryTable class.
