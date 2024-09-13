@@ -120,10 +120,9 @@ class GenericTable:
         Raises:
             UnsupportedDatabaseTypeError: If an unsupported `db_type` is provided.
         """  # noqa: E501
-        if db_type == "bigquery":
-            self.__table = BigqueryTable(table_id)
-        else:
+        if db_type != "bigquery":
             raise UnsupportedDatabaseTypeError(db_type)
+        self.__table = BigqueryTable(table_id)
         self.table_id = table_id
         self.table_name = self.__table.table_name
         self.__db_type = db_type
