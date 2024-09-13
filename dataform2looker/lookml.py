@@ -1,13 +1,24 @@
+"""This module provides functionality for generating LookML view files based on a JSON source containing table information."""  # noqa: E501
+
 import json
 import logging
-import os
 
 import lkml
 
-from .database_mappers import GenericTable
+from dataform2looker.database_mappers import GenericTable
 
 
 class LookML:
+    """Manages the generation and saving of LookML views.
+
+    Attributes:
+        path (str): The path to the source JSON file containing table information.
+        db_type (str): The type of the database ("bigquery" currently supported).
+        lookml_templates (dict): A dictionary mapping table names to their LookML view templates.
+        views_target_folder (str): The target folder where LookML view files will be saved.
+        tags (set[str]): A set of tags to filter tables (not yet implemented).
+    """  # noqa: E501
+
     def __init__(
         self,
         source_json_path: str,
@@ -15,6 +26,14 @@ class LookML:
         views_target_folder: str,
         tags: list[str] = None,
     ) -> None:
+        """Initializes the `LookML` object.
+
+        Args:
+            source_json_path: The path to the source JSON file.
+            db_type: The type of the database ("bigquery" currently supported).
+            views_target_folder: The target folder for LookML view files.
+            tags: A list of tags to filter tables (not yet implemented).
+        """  # noqa: E501
         self.path = source_json_path
         self.db_type = db_type
         self.__tables_ids = self.__get_list_of_table_ids()
@@ -26,6 +45,7 @@ class LookML:
         self.tags = set(tags or [])
 
     def save_lookml_views(self) -> None:
+        """Generates and saves LookML view files for each table."""  # noqa: E501
         for table_name, table_template in self.lookml_templates.items():
             file_path = f"{self.views_target_folder}/" f"{table_name}.view.lkml"
             with open(file_path, "w") as f:
@@ -36,6 +56,14 @@ class LookML:
         )
 
     def __generate_lookml_templates(self, tables_list: list[GenericTable]) -> dict:
+        """Generates LookML view templates for a list of `GenericTable` objects.
+
+        Args:
+            tables_list: A list of `GenericTable` objects representing the tables.
+
+        Returns:
+            A dictionary mapping table names to their LookML view templates.
+        """  # noqa: E501
         lookml_tables = {}
         for table in tables_list:
             lookml_tables[table.table_name] = lkml.dump(table.table_dictionary)
@@ -49,11 +77,24 @@ class LookML:
         self,
         tables_ids: list[str],
     ) -> list[GenericTable]:
+        """Initializes `GenericTable` objects for a list of table IDs.
+
+        Args:
+            tables_ids: A list of table IDs.
+
+        Returns:
+            A list of `GenericTable` objects representing the tables.
+        """  # noqa: E501
         tables_list = [GenericTable(table_id, self.db_type) for table_id in tables_ids]
         return tables_list
 
     def __get_list_of_table_ids(self) -> list[str]:
-        with open(self.path, "r") as file:
+        """Extracts table IDs from the source JSON file.
+
+        Returns:
+            A list of table IDs in the format "project.dataset.table".
+        """  # noqa: E501
+        with open(self.path) as file:
             data = json.load(file)
             tables = data["tables"]
         table_id_list = [
@@ -66,12 +107,3 @@ class LookML:
         # use this as a filter [
         # x for table in tables if self.tags.intersection(set(table["tags"]))
         return table_id_list
-
-
-if __name__ == "__main__":
-    lookml_directory_name = "views"
-    os.makedirs(lookml_directory_name, exist_ok=True)
-    lookml_object = LookML(
-        "./result.json", "bigquery", f"{os.getcwd()}/{lookml_directory_name}"
-    )
-    lookml_object.save_lookml_views()

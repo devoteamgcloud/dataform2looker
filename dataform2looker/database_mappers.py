@@ -1,16 +1,14 @@
-"""Parent class for all DB to Looker Mappers and Generic table wrapper."""
+"""Parent class for all DB to Looker Mappers and Generic table wrapper."""  # noqa: E501
 
 from google.cloud import bigquery
 
-from .exceptions import UnsupportedDatabaseTypeError
+from dataform2looker.exceptions import UnsupportedDatabaseTypeError
 
 
 class Column:
     """Base column class for representing column information.
 
     Attributes:
-        _DIMENSION_TYPE_MAP (dict): A mapping of Looker data types to dimension types.
-        _DIMENSION_GROUP_MAP (dict): A mapping of time-related Looker types to their available timeframes.
         name (str): The name of the column.
         description (str): The description of the column (or an empty string if not provided).
         field_type (str): The Looker data type of the column.
