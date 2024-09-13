@@ -1,6 +1,6 @@
 """This module contains unit tests for the `Column` class from the `dataform2looker.database_mappers` module."""  # noqa: E501
 
-import pytest
+from pytest import fixture
 
 from dataform2looker.database_mappers import Column
 
@@ -13,7 +13,7 @@ my_dimension_type = "dimension"
 class TestColumn:
     """Test class for the `Column` class."""
 
-    @pytest.fixture
+    @fixture()
     def my_column(self) -> Column:
         """Creates a `Column` object for testing."""
         return Column(
