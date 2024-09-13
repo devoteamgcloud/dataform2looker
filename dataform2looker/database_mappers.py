@@ -78,14 +78,14 @@ class Column:
         assert (
             self.field_type in self._DIMENSION_TYPE_MAP
         ), f"Invalid field type, use one of {self._DIMENSION_TYPE_MAP.keys()}"
-        self.dimension_type = self._DIMENSION_TYPE_MAP[self.dimension_type]
+        self.dimension_type = self._DIMENSION_TYPE_MAP[self.field_type]
         self.column_dictionary = {
             "name": self.name,
             "type": self.field_type,
             "description": self.description,
             "sql": f"{{TABLE}}.{self.name}",
         }
-        if self._DIMENSION_TYPE_MAP[self.dimension_type] == "time_dimension_group":
+        if self.dimension_type == "time_dimension_group":
             self.column_dictionary["timeframes"] = self._DIMENSION_GROUP_MAP[
                 self.dimension_type
             ]
