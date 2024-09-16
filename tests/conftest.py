@@ -28,17 +28,33 @@ def pytest_addoption(parser: Parser) -> None:
 
 @fixture()
 def bq_table_id(request: FixtureRequest) -> str:
-    """Fixture bq_table_id."""
+    """Fixture bq_table_id.
+
+    Returns:
+        str: The BigQuery table ID specified by the `--bq_table_id` command-line option,
+             defaulting to "bigquery-public-data.chicago_taxi_trips.taxi_trips".
+    """  # noqa: E501
     return request.config.getoption("--bq_table_id")
 
 
 @fixture()
 def source_json_path(request: FixtureRequest) -> str:
-    """Fixture source_json_path."""
+    """Fixture source_json_path.
+
+    Returns:
+        str: The path to the Dataform JSON file specified by the `--source_json_path` command-line option,
+             defaulting to "tests/dataform_result.json".
+    """  # noqa: E501
     return request.config.getoption("--source_json_path")
 
 
 @fixture()
 def target_folder_path(request: FixtureRequest) -> str:
-    """Fixture target_folder_path."""
+    """Fixture target_folder_path.
+
+    Returns:
+        str: The target folder path specified by the `--target_folder_path` command-line option,
+             defaulting to "tests/".
+    """  # noqa: E501
+    return request.config.getoption("--target_folder_path")
     return request.config.getoption("--target_folder_path")
