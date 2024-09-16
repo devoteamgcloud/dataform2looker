@@ -48,6 +48,7 @@ class LookML:
         """Generates and saves LookML view files for each table."""  # noqa: E501
         for table_name, table_template in self.lookml_templates.items():
             file_path = f"{self.target_folder_path}/" f"{table_name}.view.lkml"
+            logging.debug(f"Creating file {file_path}")
             with open(file_path, "w") as f:
                 f.write(table_template)
         logging.info(
@@ -101,6 +102,7 @@ class LookML:
             f"{table['target']['database']}.{table['target']['schema']}.{table['target']['name']}"
             for table in tables
         ]
+        logging.debug(f"Table id list: {table_id_list}")
         logging.debug(f"Read file {self.source_json_path}, found {len(tables)}")
         # TODO implement tag filter
         # pass the following parameter tags:set[str] = None

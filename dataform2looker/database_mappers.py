@@ -1,5 +1,7 @@
 """Parent class for all DB to Looker Mappers and Generic table wrapper."""  # noqa: E501
 
+import logging
+
 from google.cloud import bigquery
 
 from dataform2looker.exceptions import UnsupportedDatabaseTypeError
@@ -19,8 +21,6 @@ class Column:
         __init__(self, description: str, field_type: str, name: str) -> None:
             Initializes the `Column` object and constructs the `column_dictionary`.
 
-    Raises:
-        AssertionError: If an invalid `field_type` is provided.
     """  # noqa: E501
 
     _DIMENSION_TYPE_MAP = {
@@ -63,9 +63,6 @@ class Column:
             description: The description of the column.
             field_type: The Looker data type of the column.
             name: The name of the column.
-
-        Raises:
-            AssertionError: If an invalid `field_type` is provided.
 
         Sets the attributes and constructs the `column_dictionary` for Looker integration.
         If the column is a time dimension group, it adds `timeframes` and `datatype` to the dictionary.
@@ -136,11 +133,15 @@ class GenericTable:
             for column in self.__table.columns
             if column.dimension_type == "dimension"
         ]
+        logging.debug(f"Dimensions for table {self.table_name}: {self.dimensions}")
         self.dimension_group = [
             column.column_dictionary
             for column in self.__table.columns
             if column.dimension_type == "time_dimension_group"
         ]
+        logging.debug(
+            f"Dimensions Group for table {self.table_name}: {self.dimension_group}"
+        )
         # self.measures = # TODO set up measures
         # All views should contain count
         # TODO discuss if sum measures should be created automatically
@@ -207,8 +208,6 @@ class BigQueryTable:
         self.table_id = table_id
         self.table_name = table_id.split(".")[-1]
         self.columns = self.__get_columns()
-        # TODO Implement description
-        # self.description = self.__get_table_description()
 
     def __get_columns(self) -> list[Column]:
         """Retrieves and structures column information from a BigQuery table.
@@ -224,6 +223,7 @@ class BigQueryTable:
         """  # noqa: E501
         client = bigquery.Client()
         table = client.get_table(self.table_id)
+        logging.debug(f"Got table schema from table {self.table_id}")
         columns = [
             Column(
                 name=field.name,
