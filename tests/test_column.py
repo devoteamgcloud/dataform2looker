@@ -58,6 +58,7 @@ class TestColumn:
             name="created_at",
             description="Date the record was created",
             data_type="timestamp",
+            field_type="datetime",
             time_frames=["raw", "time", "date", "week", "month", "quarter", "year"],
         )
         assert column.dimension_type == "time_dimension_group"
