@@ -58,3 +58,9 @@ You might need to adjust the generated LookML code further to match your specifi
 ## Contributing
 
 Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request on the GitHub repository.
+
+To install use poetry and make sure to add the DEV dependencies if local testing is needed.
+
+```bash
+poetry install
+```
