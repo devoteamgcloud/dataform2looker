@@ -16,10 +16,11 @@ jobs:
       matrix:
         python-version: ["3.9", "3.10", "3.11"]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Authenticate to GCP
-        uses: google-github-actions/auth@v0
+        uses: 'google-github-actions/auth@v2'
         with:
+          project_id: df2looker-test-datasets
           create_credentials_file: true
           credentials_json: "${{ secrets.SA_GITHUB_ACTIONS }}"
       - name: Install poetry
