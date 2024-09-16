@@ -1,3 +1,5 @@
+"""CLI script for generating LookML view files from Dataform models."""
+
 import argparse
 import logging
 import subprocess
@@ -17,7 +19,7 @@ def _generate_view(path_to_json_file: str, target_dir: str) -> int:
     """
     logging.info(f" Generating views from: {path_to_json_file}")
     try:
-        lookml_object = LookML(path_to_json_file, "BigQuery", target_dir)
+        lookml_object = LookML(path_to_json_file, target_dir)
         lookml_object.save_lookml_views()
         return 0
     except subprocess.CalledProcessError as e:

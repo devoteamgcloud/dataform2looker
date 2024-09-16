@@ -109,7 +109,7 @@ class GenericTable:
         UnsupportedDatabaseTypeError: If an unsupported `db_type` is provided.
     """  # noqa: E501
 
-    def __init__(self, table_id: str, db_type: str) -> None:
+    def __init__(self, table_id: str, db_type: str = "bigquery") -> None:
         """Initializes the `GenericTable` object based on the database type.
 
         Args:
