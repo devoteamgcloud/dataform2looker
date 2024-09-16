@@ -1,2 +1,0 @@
-lkml==1.3.5
-google-cloud-bigquery==3.25.0
