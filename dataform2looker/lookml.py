@@ -12,34 +12,34 @@ class LookML:
     """Manages the generation and saving of LookML views.
 
     Attributes:
-        path (str): The path to the source JSON file containing table information.
-        db_type (str): The type of the database ("bigquery" currently supported).
+        source_json_path (str): The path to the source JSON file containing table information.
+        target_folder_path (str): The target folder where LookML view files will be saved.
         lookml_templates (dict): A dictionary mapping table names to their LookML view templates.
-        views_target_folder (str): The target folder where LookML view files will be saved.
+        db_type (str): The type of the database ("bigquery" currently supported).
         tags (set[str]): A set of tags to filter tables (not yet implemented).
     """  # noqa: E501
 
     def __init__(
         self,
         source_json_path: str,
-        db_type: str,
-        views_target_folder: str,
+        target_folder_path: str,
+        db_type: str = "bigquery",
         tags: list[str] = None,
     ) -> None:
         """Initializes the `LookML` object.
 
         Args:
             source_json_path: The path to the source JSON file.
+            target_folder_path: The target folder for LookML view files.
             db_type: The type of the database ("bigquery" currently supported).
-            views_target_folder: The target folder for LookML view files.
             tags: A list of tags to filter tables (not yet implemented).
         """  # noqa: E501
-        self.path = source_json_path
+        self.source_json_path = source_json_path
         self.db_type = db_type
         self.__tables_ids = self.__get_list_of_table_ids()
         self.__tables_list = self.__initialize_tables(self.__tables_ids)
         self.lookml_templates = self.__generate_lookml_templates(self.__tables_list)
-        self.views_target_folder = views_target_folder
+        self.target_folder_path = target_folder_path
         # TODO finish setting up tags to be used as filters
         # when getting the list of tables
         self.tags = set(tags or [])
@@ -47,12 +47,12 @@ class LookML:
     def save_lookml_views(self) -> None:
         """Generates and saves LookML view files for each table."""  # noqa: E501
         for table_name, table_template in self.lookml_templates.items():
-            file_path = f"{self.views_target_folder}/" f"{table_name}.view.lkml"
+            file_path = f"{self.target_folder_path}/" f"{table_name}.view.lkml"
             with open(file_path, "w") as f:
                 f.write(table_template)
         logging.info(
             f"A total of {len(self.lookml_templates)} LookML view files successfully \
-                created in folder '{self.views_target_folder}'"
+                created in folder '{self.target_folder_path}'"
         )
 
     def __generate_lookml_templates(self, tables_list: list[GenericTable]) -> dict:
@@ -94,14 +94,14 @@ class LookML:
         Returns:
             A list of table IDs in the format "project.dataset.table".
         """  # noqa: E501
-        with open(self.path) as file:
+        with open(self.source_json_path) as file:
             data = json.load(file)
             tables = data["tables"]
         table_id_list = [
             f"{table['target']['database']}.{table['target']['schema']}.{table['target']['name']}"
             for table in tables
         ]
-        logging.debug(f"Read file {self.path}, found {len(tables)}")
+        logging.debug(f"Read file {self.source_json_path}, found {len(tables)}")
         # TODO implement tag filter
         # pass the following parameter tags:set[str] = None
         # use this as a filter [
