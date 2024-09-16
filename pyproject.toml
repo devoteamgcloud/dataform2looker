@@ -21,7 +21,7 @@ readme = "README.md"
 version = "0.0.1"
 
 [tool.poetry.scripts]
-df2l = "dataform2looker.dataform2looker:main"
+df2looker = "dataform2looker.dataform2looker:main"
 
 [build-system]
 build-backend = "poetry.masonry.api"
