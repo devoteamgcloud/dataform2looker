@@ -1,4 +1,4 @@
-name: Pytest CI
+name: pre-commits CI
 
 on:
   push:
@@ -6,6 +6,8 @@ on:
       - dataform2looker/**
       - tests/**
       - .pre-commit-config.yaml
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   test:
