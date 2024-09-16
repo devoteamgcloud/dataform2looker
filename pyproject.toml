@@ -64,7 +64,7 @@ select = [
     "DOC",
     ]
 ignore = ["ANN101"]
-
+preview = true
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
@@ -103,3 +103,4 @@ indent-width = 4
 
 [tool.ruff.format]
 indent-style = "space"
+preview = true
