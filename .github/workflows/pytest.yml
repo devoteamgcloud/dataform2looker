@@ -16,6 +16,8 @@ jobs:
       matrix:
         python-version: ["3.9", "3.10", "3.11"]
     steps:
+      - name: Install poetry
+        run: pip install poetry
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v3
@@ -23,8 +25,6 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: "poetry"
           cache-dependency-path: "poetry.lock"
-      - name: Install poetry
-        run: pip install poetry
       - name: Install
         run: poetry install
       - name: Run tests with pytest
