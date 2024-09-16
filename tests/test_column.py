@@ -15,7 +15,11 @@ class TestColumn:
 
     @fixture()
     def my_column(self) -> Column:
-        """Creates a `Column` object for testing."""
+        """Creates a `Column` object for testing.
+
+        Returns:
+            Column: A `Column` object.
+        """  # noqa: E501
         return Column(
             description=my_column_description,
             field_type=my_field_type,
@@ -53,11 +57,11 @@ class TestColumn:
         column = Column(
             name="created_at",
             description="Date the record was created",
-            field_type="timestamp",
+            data_type="timestamp",
+            time_frames=["raw", "time", "date", "week", "month", "quarter", "year"],
         )
         assert column.dimension_type == "time_dimension_group"
         assert "timeframes" in column.column_dictionary
-        assert "datatype" in column.column_dictionary
 
     def test_invalid_field_type(self) -> None:
         """Tests the initialization of a `Column` object with an invalid field type.

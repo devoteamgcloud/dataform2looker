@@ -8,18 +8,16 @@ from dataform2looker.exceptions import UnsupportedDatabaseTypeError
 
 
 class Column:
-    """Base column class for representing column information.
+    """Represents a column in a database table and its mapping to Looker.
 
     Attributes:
         name (str): The name of the column.
         description (str): The description of the column (or an empty string if not provided).
         field_type (str): The Looker data type of the column.
+        data_type (str): The original database data type of the column.
+        time_frames (list[str]): A list of timeframes for time dimension groups (optional).
         dimension_type (str): The type of dimension ("dimension" or "time_dimension_group").
         column_dictionary (dict): A dictionary representation of the column for Looker integration.
-
-    Methods:
-        __init__(self, description: str, field_type: str, name: str) -> None:
-            Initializes the `Column` object and constructs the `column_dictionary`.
 
     """  # noqa: E501
 
@@ -28,41 +26,27 @@ class Column:
         "string": "dimension",
         "timestamp": "time_dimension_group",
         "datetime": "time_dimension_group",
+        "time": "time_dimension_group",
         "date": "time_dimension_group",
         "yesno": "dimension",
     }
 
-    _DIMENSION_GROUP_MAP = {
-        "timestamp": [
-            "raw",
-            "time",
-            "hour",
-            "date",
-            "week",
-            "month",
-            "quarter",
-            "year",
-        ],
-        "datetime": [
-            "raw",
-            "time",
-            "hour",
-            "date",
-            "week",
-            "month",
-            "quarter",
-            "year",
-        ],
-        "date": ["raw", "date", "week", "month", "quarter", "year"],
-    }
-
-    def __init__(self, name: str, description: str, field_type: str) -> None:
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        field_type: str,
+        data_type: str = None,
+        time_frames: list[str] = None,
+    ) -> None:
         """Initializes the `Column` object.
 
         Args:
+            name: The name of the column.
             description: The description of the column.
             field_type: The Looker data type of the column.
-            name: The name of the column.
+            data_type: The original database data type of the column.
+            time_frames: A list of timeframes for time dimension groups (optional).
 
         Sets the attributes and constructs the `column_dictionary` for Looker integration.
         If the column is a time dimension group, it adds `timeframes` and `datatype` to the dictionary.
@@ -70,6 +54,8 @@ class Column:
         self.name = name
         self.description = description or ""
         self.field_type = field_type
+        self.data_type = data_type
+        self.time_frames = time_frames
         assert (
             self.field_type in self._DIMENSION_TYPE_MAP
         ), f"Invalid field type, use one of {self._DIMENSION_TYPE_MAP.keys()},\
@@ -82,10 +68,8 @@ class Column:
             "sql": f"{{TABLE}}.{self.name}",
         }
         if self.dimension_type == "time_dimension_group":
-            self.column_dictionary["timeframes"] = self._DIMENSION_GROUP_MAP[
-                self.field_type
-            ]
-            self.column_dictionary["datatype"] = self.dimension_type
+            self.column_dictionary["datatype"] = self.data_type
+            self.column_dictionary["timeframes"] = self.time_frames
 
 
 class GenericTable:
@@ -186,14 +170,38 @@ class BigQueryTable:
         "BIGNUMERIC": "number",
         "BOOLEAN": "yesno",
         "STRING": "string",
-        "TIMESTAMP": "timestamp",
-        "DATETIME": "datetime",
-        "DATE": "date",
+        "TIMESTAMP": "time",
+        "DATETIME": "time",
+        "DATE": "time",
         "TIME": "string",
         "BOOL": "yesno",
         "ARRAY": "string",
         "GEOGRAPHY": "string",
         "BYTES": "string",
+    }
+
+    _TIME_FRAMES_MAP = {
+        "TIMESTAMP": [
+            "raw",
+            "time",
+            "hour",
+            "date",
+            "week",
+            "month",
+            "quarter",
+            "year",
+        ],
+        "DATETIME": [
+            "raw",
+            "time",
+            "hour",
+            "date",
+            "week",
+            "month",
+            "quarter",
+            "year",
+        ],
+        "DATE": ["raw", "date", "week", "month", "quarter", "year"],
     }
 
     def __init__(self, table_id: str) -> None:
@@ -216,10 +224,7 @@ class BigQueryTable:
         and constructs a list of `Column` objects representing each field in the table.
 
         Returns:
-            list[Column]: A list of `Column` objects, each containing:
-                - The field's description (from BigQuery).
-                - The field's name.
-                - The field's data type, mapped to a corresponding Looker type.
+            list[Column]: A list of `Column` objects, each representing a column in the BigQuery table.
         """  # noqa: E501
         client = bigquery.Client()
         table = client.get_table(self.table_id)
@@ -228,24 +233,10 @@ class BigQueryTable:
             Column(
                 name=field.name,
                 description=field.description,
-                field_type=self.__map_to_looker_type(field.field_type),
+                field_type=self._LOOKER_TYPE_MAP[field.field_type],
+                data_type=field.field_type.lower(),
+                time_frames=self._TIME_FRAMES_MAP.get(field.field_type, None),
             )
             for field in table.schema
         ]
         return columns
-
-    def __map_to_looker_type(self, field_type: str) -> str:
-        """Maps a BigQuery field type to its corresponding Looker type.
-
-        Args:
-            field_type: The BigQuery field type string.
-
-        Returns:
-            str: The corresponding Looker type string.
-
-        Note:
-            - This method directly accesses the `_LOOKER_TYPE_MAP` dictionary.
-            - It does not handle cases where the `field_type` is not found in the map.
-        """  # noqa: E501
-        # Avoid using get since default to "string" might not be the best option
-        return self._LOOKER_TYPE_MAP[field_type]
