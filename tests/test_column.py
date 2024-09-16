@@ -1,6 +1,6 @@
 """This module contains unit tests for the `Column` class from the `dataform2looker.database_mappers` module."""  # noqa: E501
 
-from pytest import fixture
+from pytest import fixture, raises
 
 from dataform2looker.database_mappers import Column
 
@@ -44,3 +44,29 @@ class TestColumn:
             "sql": f"{{TABLE}}.{my_column_name}",
         }
         assert my_column.column_dictionary == column_dictionary
+
+    def test_time_dimension_group(self) -> None:
+        """Tests the initialization of a time dimension group `Column` object.
+
+        Verifies that the `column_dictionary` is constructed correctly with `timeframes` and `datatype`.
+        """  # noqa: E501
+        column = Column(
+            name="created_at",
+            description="Date the record was created",
+            field_type="timestamp",
+        )
+        assert column.dimension_type == "time_dimension_group"
+        assert "timeframes" in column.column_dictionary
+        assert "datatype" in column.column_dictionary
+
+    def test_invalid_field_type(self) -> None:
+        """Tests the initialization of a `Column` object with an invalid field type.
+
+        Verifies that an `AssertionError` is raised when an invalid `field_type` is provided.
+        """  # noqa: E501
+        with raises(AssertionError):
+            Column(
+                name="invalid_column",
+                description="Invalid column with unsupported type",
+                field_type="invalid_type",
+            )
