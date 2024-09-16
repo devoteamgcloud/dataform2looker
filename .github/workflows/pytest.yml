@@ -7,6 +7,10 @@ on:
       - tests/**
   pull_request:
     branches: [ "main" ]
+  workflow_call:
+    secrets:
+      SA_GITHUB_ACTIONS:
+        required: true
 
 jobs:
   build:
