@@ -44,7 +44,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
 
     parser.add_argument(
-        "--source-path",
+        "--source-file",
         type=Path,
         help="Path to the views file or directory containing views.",
     )
@@ -60,16 +60,23 @@ def main(argv: Sequence[str] | None = None) -> int:
         help="Enable verbose logging.",
     )
 
+    # TODO finish tagging filter
+    # argparser.add_argument(
+    #     '--tag',
+    #     help='Filter to dbt models using this tag',
+    #     type=str,
+    # )
+
     args = parser.parse_args(argv)
 
-    input_path = args.source_path
+    source_file = args.source_file
     target_dir = args.target_dir
     verbose = args.verbose
 
     logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO)
 
-    if input_path.is_file():
-        logging.info(f" Processing file: {input_path}")
-        return _generate_view(str(input_path), str(target_dir))
+    if source_file.is_file():
+        logging.info(f" Processing file: {source_file}")
+        return _generate_view(str(source_file), str(target_dir))
     logging.error("The provided path is not taking to a JSON file")
     sys.exit(1)
