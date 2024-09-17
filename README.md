@@ -59,13 +59,3 @@ File Saving: The generated LookML view files are saved to the specified target d
 
 The tool currently supports BigQuery as the underlying database for Dataform.
 You might need to adjust the generated LookML code further to match your specific Looker project requirements.
-
-## Contributing
-
-Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request on the GitHub repository.
-
-To install use poetry and make sure to add the DEV dependencies if local testing is needed.
-
-```bash
-poetry install
-```
