@@ -25,6 +25,7 @@ df2looker = "dataform2looker.dataform2looker:main"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
+pre-commit = "3.8.0"
 
 [build-system]
 build-backend = "poetry.masonry.api"

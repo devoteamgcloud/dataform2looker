@@ -1,0 +1,42 @@
+# TODO finish the auth step
+# name: Pytest CI
+
+# on:
+#   push:
+#     paths:
+#       - dataform2looker/**
+#       - tests/**
+#   pull_request:
+#     branches: [ "main" ]
+#   workflow_call:
+#     secrets:
+#       SA_GITHUB_ACTIONS:
+#         required: true
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         python-version: ["3.9", "3.10", "3.11"]
+#     steps:
+#       - uses: actions/checkout@v4
+#       - name: Authenticate to GCP
+#         uses: google-github-actions/auth@v2
+#         with:
+#           project_id: df2looker-test-datasets
+#           create_credentials_file: true
+#           credentials_json: "${{ secrets.SA_GITHUB_ACTIONS }}"
+#       - uses: actions/checkout@v4
+#       - name: Set up Python ${{ matrix.python-version }}
+#         uses: actions/setup-python@v3
+#         with:
+#           python-version: ${{ matrix.python-version }}
+#       - name: Install poetry
+#         run: pip install poetry
+#       - name: Install
+#         run: poetry install
+#       - name: Run tests with pytest
+#         run: |
+#           poetry run pytest -vv
