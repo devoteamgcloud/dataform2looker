@@ -21,7 +21,10 @@ readme = "README.md"
 version = "0.0.1"
 
 [tool.poetry.scripts]
-df2l = "dataform2looker.dataform2looker:main"
+df2looker = "dataform2looker.dataform2looker:main"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
 
 [build-system]
 build-backend = "poetry.masonry.api"
@@ -39,8 +42,32 @@ google-cloud-bigquery = "3.25.0"
 #bigquery = ["google-cloud-bigquery"]
 
 [tool.ruff.lint]
-select = ["E", "ANN", "I001", "N"]
-ignore = ["D417", "ANN002", "ANN003", "ANN1"]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+    # flake8-annotations
+    "ANN",
+    # pep8-naming
+    "N",
+    # flake8-pie
+    "PIE",
+    # pydocstyle
+    "D",
+    # pydoclint
+    "DOC",
+    ]
+ignore = ["ANN101"]
+preview = true
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
@@ -79,3 +106,4 @@ indent-width = 4
 
 [tool.ruff.format]
 indent-style = "space"
+preview = true

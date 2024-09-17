@@ -1,3 +1,5 @@
+"""CLI script for generating LookML view files from Dataform models."""
+
 import argparse
 import logging
 import subprocess
@@ -14,19 +16,26 @@ def _generate_view(path_to_json_file: str, target_dir: str) -> int:
     Args:
         path_to_json_file (str): Path to the JSON file from compiled Dataform project.
         target_dir (str): Target directory for Looker views.
+
+    Returns:
+        int: 0 if the view generation was successful, 1 otherwise.
     """
     logging.info(f" Generating views from: {path_to_json_file}")
     try:
-        lookml_object = LookML(path_to_json_file, "BigQuery", target_dir)
+        lookml_object = LookML(path_to_json_file, target_dir)
         lookml_object.save_lookml_views()
         return 0
     except subprocess.CalledProcessError as e:
-        logging.error(f"I failed....: {e}")
+        logging.error(f"I failed...: {e}")
         return 1
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    """Main function for the CLI script."""
+    """Main function for the CLI script.
+
+    Returns:
+        int: 0 if the script runs successfully, 1 otherwise.
+    """
     script_dir = Path(__file__).resolve().parent
 
     argv = argv if argv is not None else sys.argv[1:]
@@ -35,16 +44,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
 
     parser.add_argument(
-        "--source-path",
+        "--source-file",
         type=Path,
-        default=script_dir / "views",
         help="Path to the views file or directory containing views.",
     )
     parser.add_argument(
         "--target-dir",
         type=Path,
-        default=script_dir.parent / "views" / "output",
-        help="Target directory for looker views. Default is 'views/output'.",
+        default=script_dir.parent / "views",
+        help="Target directory for looker views. Default is 'views'.",
     )
     parser.add_argument(
         "--verbose",
@@ -52,21 +60,23 @@ def main(argv: Sequence[str] | None = None) -> int:
         help="Enable verbose logging.",
     )
 
+    # TODO finish tagging filter
+    # argparser.add_argument(
+    #     '--tag',
+    #     help='Filter to dbt models using this tag',
+    #     type=str,
+    # )
+
     args = parser.parse_args(argv)
 
-    input_path = args.source_path
+    source_file = args.source_file
     target_dir = args.target_dir
     verbose = args.verbose
 
     logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO)
 
-    if input_path.is_file():
-        logging.info(f" Processing file: {input_path}")
-        return _generate_view(str(input_path), str(target_dir))
-    else:
-        logging.error("The provided path is not taking to a JSON file")
-        sys.exit(1)
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
+    if source_file.is_file():
+        logging.info(f" Processing file: {source_file}")
+        return _generate_view(str(source_file), str(target_dir))
+    logging.error("The provided path is not taking to a JSON file")
+    sys.exit(1)

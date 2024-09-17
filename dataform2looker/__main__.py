@@ -1,3 +1,5 @@
+"""This module serves as the entry point for the dataform2looker package."""  # noqa: E501
+
 from __future__ import annotations
 
 from dataform2looker.dataform2looker import main
