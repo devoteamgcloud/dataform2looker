@@ -2,7 +2,7 @@
 
 This repository provides a tool to generate LookML models from Dataform models.
 
-This command-line interface (CLI) tool helps you generate LookML view files from your Dataform models. It simplifies the process of integrating your Dataform data definitions with Looker for analysis and visualization.
+This command-line interface (CLI) tool helps you generate LookML view files from your Dataform models. It simplifies the process of integrating your Dataform data definitions with Looker for analysis and visualization. The tool requires the Dataform compilation JSON output
 
 ## Installation
 
@@ -28,21 +28,26 @@ The `--force-reinstall` flag makes certain that the newest iteration of the code
 
 ### CLI Commands
 
-You can use the following CLI commands to generate LookML models:
+You can use the following CLI commands to generate LookML models. This requires the JSON outpt of the Dataform project compilation
 
 ```bash
 # Generate LookML views from a single file
-df2looker --source-path my_dataform_project/dataform.json --target-dir my_looker_project/views
+df2looker --source-path my_dataform_project/dataform-compile.json --target-dir my_looker_project/views
 ```
 
 This command will read the dataform.json file, extract the schema information, and generate LookML view files in the my_looker_project/views directory.
 
 #### Command Line Arguments
 
-- `-dir`: Path to the Dataform model file or directory. This is a required argument.
+- `--source-path`: Path to the [Dataform compile model JSON file](https://cloud.google.com/dataform/docs/use-dataform-cli#view_compilation_output). This is a required argument.
 - `-target-dir`: Target directory for the output LookML files. Defaults to the current directory.
 - `--verbose`: Enable verbose logging for debugging purposes.
 - `-h`, `--help`: bring out help message.
+
+### Requirements
+
+- A JSON file containing the [compilation output](https://cloud.google.com/dataform/docs/use-dataform-cli#view_compilation_output).
+- A working connection to the BigQuery project to fetch the schemas of the tables
 
 ## How it Works
 
