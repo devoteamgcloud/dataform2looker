@@ -13,6 +13,13 @@ def pytest_addoption(parser: Parser) -> None:
               use chicago taxi trips schema from public data in BigQuery.",
     )
     parser.addoption(
+        "--bq_table_id_2",
+        action="store",
+        default="bigquery-public-data.chicago_crime.crime",
+        help="BigQuery table id to use for testing, \
+              use chicago taxi trips schema from public data in BigQuery.",
+    )
+    parser.addoption(
         "--source_json_path",
         action="store",
         default="tests/dataform_result.json",
@@ -35,6 +42,17 @@ def bq_table_id(request: FixtureRequest) -> str:
              defaulting to "bigquery-public-data.chicago_taxi_trips.taxi_trips".
     """  # noqa: E501
     return request.config.getoption("--bq_table_id")
+
+
+@fixture()
+def bq_table_id_2(request: FixtureRequest) -> str:
+    """Fixture bq_table_id.
+
+    Returns:
+        str: The BigQuery table ID specified by the `--bq_table_id_2` command-line option,
+             defaulting to "bigquery-public-data.chicago_crime.crime".
+    """  # noqa: E501
+    return request.config.getoption("--bq_table_id_2")
 
 
 @fixture()

@@ -26,9 +26,22 @@ class TestLookML:
         """  # noqa: E501
         assert my_lookml.source_json_path == source_json_path
         assert my_lookml.target_folder_path == target_folder_path
-        # Only 1 because there's only 1 table declared in the dataform result json
-        assert len(my_lookml.lookml_templates) == 1
+        # Only 2 because there are only 2 tables declared in the dataform result json
+        assert len(my_lookml.lookml_templates) == 2
         assert my_lookml.db_type == "bigquery"
+
+    def test_tag_filters(self, source_json_path: str, target_folder_path: str) -> None:
+        """Tests the initialization of a `LookML` object.
+
+        Verifies that the attributes of the created `LookML` object match the expected values using a filter
+        """  # noqa: E501
+        my_lookml_tag = LookML(source_json_path, target_folder_path, tags=["tag1"])
+
+        assert my_lookml_tag.source_json_path == source_json_path
+        assert my_lookml_tag.target_folder_path == target_folder_path
+        # Only 1 because there's only 1 table declared in the dataform result json
+        assert len(my_lookml_tag.lookml_templates) == 1
+        assert my_lookml_tag.db_type == "bigquery"
 
 
 # TODO include a test for the generated template

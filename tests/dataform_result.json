@@ -20,6 +20,27 @@
         "database": "bigquery-public-data"
       },
       "enumType": "TABLE"
+    },
+    {
+      "type": "table",
+      "target": {
+        "schema": "chicago_crime",
+        "name": "crime",
+        "database": "bigquery-public-data"
+      },
+      "query": "\n\n SELECT 1 \n",
+      "disabled": false,
+      "fileName": "",
+      "tags": [
+        "tag2"
+      ],
+      "dependencyTargets": [],
+      "canonicalTarget": {
+        "schema": "chicago_crime",
+        "name": "crime",
+        "database": "bigquery-public-data"
+      },
+      "enumType": "TABLE"
     }
   ],
   "assertions": [],
