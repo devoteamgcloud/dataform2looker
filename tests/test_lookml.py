@@ -30,5 +30,20 @@ class TestLookML:
         assert len(my_lookml.lookml_templates) == 1
         assert my_lookml.db_type == "bigquery"
 
+    def test_measure_generation(self, my_lookml: LookML) -> None:
+        """Tests the initialization of a `LookML` object.
+
+        Verifies that the attributes of the created `LookML` object match the expected values.
+        """  # noqa: E501
+        for view in my_lookml.lookml_templates.values():
+            assert (
+                """
+    measure: count {
+    type: count
+  }
+  """.strip()
+                in view.strip()
+            )
+
 
 # TODO include a test for the generated template
