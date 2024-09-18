@@ -58,7 +58,7 @@ File Saving: The generated LookML view files are saved to the specified target d
 
 ### Examples
 
-Generating the LookML Views using multiple tags. This will generate only the views for the models that matche the tags.
+Generating the LookML Views using multiple tags. This will generate only the views for the models that match the tags.
 
 ```bash
 # Generate LookML views from a single file
