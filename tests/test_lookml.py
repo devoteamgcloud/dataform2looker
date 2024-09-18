@@ -38,10 +38,10 @@ class TestLookML:
         for view in my_lookml.lookml_templates.values():
             assert (
                 """
-                measure: count {
-                type: count
-                }
-                """.strip()
+    measure: count {
+    type: count
+  }
+  """.strip()
                 in view.strip()
             )
 
