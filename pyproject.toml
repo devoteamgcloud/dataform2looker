@@ -1,12 +1,9 @@
 [tool]
 
 [tool.poetry]
-authors = ["Khachatur Papikyan <khachatur.papikyan@devoteam.com>",
-           "Edgar Ochoa <edgar.ochoa@devoteam.com>",
-           "Arturo Voltattorni <arturo.voltattorni@devoteam.com>",
-           "Alexandros Kyrloglou <alexandros.kyrloglou@devoteam.com>"]
+authors = ["Devoteam <info@devoteam.com>"]
 classifiers = [
-  'Development Status :: 2 - Pre-Alpha',
+  'Development Status :: 4 - Beta',
   'Intended Audience :: Developers',
   'License :: OSI Approved :: MIT License',
   'Natural Language :: English',
@@ -16,6 +13,7 @@ classifiers = [
 ]
 description = "A package to generate Looker view files automatically from dataform models."
 license = "MIT"
+keywords = [ "airflow", "orchestration", "workflow", "dag", "pipelines", "automation", "data" ]
 name = "dataform2looker"
 packages = [
   {include = "dataform2looker"},
@@ -23,9 +21,22 @@ packages = [
 readme = "README.md"
 version = "0.0.1"
 
+[tool.poetry.scripts]
+df2looker = "dataform2looker.dataform2looker:main"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+pre-commit = "3.8.0"
+
 [build-system]
 build-backend = "poetry.masonry.api"
-requires = ["poetry>=0.12"]
+requires = ["poetry>=1.8.3"]
+
+[project.urls]
+Homepage = "https://github.com/devoteamgcloud/dataform2looker/"
+"Bug Tracker" = "https://github.com/devoteamgcloud/dataform2looker/issues"
+Documentation = "https://github.com/devoteamgcloud/dataform2looker/blob/main/README.md"
+"Source Code" = "https://github.com/devoteamgcloud/dataform2looker/"
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -33,9 +44,36 @@ lkml = "1.3.5"
 google-cloud-bigquery = "3.25.0"
 PyGithub = "^2.3.0"
 
+#[tool.poetry.extras] TODO: add when other databases are implemented
+#bigquery = ["google-cloud-bigquery"]
+
 [tool.ruff.lint]
-select = ["E", "ANN", "I001", "N"]
-ignore = ["D417", "ANN002", "ANN003", "ANN1"]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+    # flake8-annotations
+    "ANN",
+    # pep8-naming
+    "N",
+    # flake8-pie
+    "PIE",
+    # pydocstyle
+    "D",
+    # pydoclint
+    "DOC",
+    ]
+ignore = ["ANN101"]
+preview = true
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
@@ -74,3 +112,4 @@ indent-width = 4
 
 [tool.ruff.format]
 indent-style = "space"
+preview = true
