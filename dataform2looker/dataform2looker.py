@@ -10,19 +10,20 @@ from pathlib import Path
 from dataform2looker.lookml import LookML
 
 
-def _generate_view(path_to_json_file: str, target_dir: str) -> int:
+def _generate_view(path_to_json_file: str, target_dir: str, tags: set[str]) -> int:
     """Generates LookML view files from a Dataform model.
 
     Args:
         path_to_json_file (str): Path to the JSON file from compiled Dataform project.
         target_dir (str): Target directory for Looker views.
+        tags (set[str]): Filter to dataform models using this tag.
 
     Returns:
         int: 0 if the view generation was successful, 1 otherwise.
     """
     logging.info(f" Generating views from: {path_to_json_file}")
     try:
-        lookml_object = LookML(path_to_json_file, target_dir)
+        lookml_object = LookML(path_to_json_file, target_dir, tags=tags)
         lookml_object.save_lookml_views()
         return 0
     except subprocess.CalledProcessError as e:
@@ -60,23 +61,26 @@ def main(argv: Sequence[str] | None = None) -> int:
         help="Enable verbose logging.",
     )
 
-    # TODO finish tagging filter
-    # argparser.add_argument(
-    #     '--tag',
-    #     help='Filter to dbt models using this tag',
-    #     type=str,
-    # )
+    parser.add_argument(
+        "--tags",
+        help="Filter to dataform models using this tag",
+        default=None,
+        type=str,
+        nargs="+",
+        required=False,
+    )
 
     args = parser.parse_args(argv)
 
     source_file = args.source_file
     target_dir = args.target_dir
     verbose = args.verbose
+    tags = args.tags
 
     logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO)
 
     if source_file.is_file():
         logging.info(f" Processing file: {source_file}")
-        return _generate_view(str(source_file), str(target_dir))
+        return _generate_view(str(source_file), str(target_dir), set(tags))
     logging.error("The provided path is not taking to a JSON file")
     sys.exit(1)

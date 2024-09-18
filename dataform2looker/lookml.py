@@ -36,13 +36,11 @@ class LookML:
         """  # noqa: E501
         self.source_json_path = source_json_path
         self.db_type = db_type
+        self.tags = set(tags or [])
         self.__tables_ids = self.__get_list_of_table_ids()
         self.__tables_list = self.__initialize_tables(self.__tables_ids)
         self.lookml_templates = self.__generate_lookml_templates(self.__tables_list)
         self.target_folder_path = target_folder_path
-        # TODO finish setting up tags to be used as filters
-        # when getting the list of tables
-        self.tags = set(tags or [])
 
     def save_lookml_views(self) -> None:
         """Generates and saves LookML view files for each table."""  # noqa: E501
@@ -98,14 +96,17 @@ class LookML:
         with open(self.source_json_path) as file:
             data = json.load(file)
             tables = data["tables"]
-        table_id_list = [
-            f"{table['target']['database']}.{table['target']['schema']}.{table['target']['name']}"
-            for table in tables
-        ]
+        if self.tags:
+            table_id_list = [
+                f"{table['target']['database']}.{table['target']['schema']}.{table['target']['name']}"
+                for table in tables
+                if self.tags.intersection(set(table["tags"]))
+            ]
+        else:
+            table_id_list = [
+                f"{table['target']['database']}.{table['target']['schema']}.{table['target']['name']}"
+                for table in tables
+            ]
         logging.debug(f"Table id list: {table_id_list}")
         logging.debug(f"Read file {self.source_json_path}, found {len(tables)}")
-        # TODO implement tag filter
-        # pass the following parameter tags:set[str] = None
-        # use this as a filter [
-        # x for table in tables if self.tags.intersection(set(table["tags"]))
         return table_id_list
