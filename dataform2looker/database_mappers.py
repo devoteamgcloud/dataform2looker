@@ -126,17 +126,18 @@ class GenericTable:
         logging.debug(
             f"Dimensions Group for table {self.table_name}: {self.dimension_group}"
         )
-        # self.measures = # TODO set up measures
-        # All views should contain count
-        # TODO discuss if sum measures should be created automatically
-        # for for all type numbers
+        self.measures = [{"type": "count", "name": "count"}]
+        # TODO it should be possible to include other measures by passing an argument
+        # Include measures if needed such as sums of all number dimensions
+        # include count_distinct
+
         self.table_dictionary = {
             "view": {
                 "name": f"{self.table_name}",
                 "sql_table_name": f"{table_id}",
                 "dimensions": self.dimensions,
                 "dimension_groups": self.dimension_group,
-                # "meausres": self.measures,
+                "measures": self.measures,
             }
         }
 

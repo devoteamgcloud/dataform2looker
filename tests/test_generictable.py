@@ -44,9 +44,24 @@ class TestGenericTable:
         """  # noqa: E501
         table_dictionary = my_generic_table.table_dictionary
         assert "view" in table_dictionary
-        view_keys = ["name", "sql_table_name", "dimensions", "dimension_groups"]
+        view_keys = [
+            "name",
+            "sql_table_name",
+            "dimensions",
+            "dimension_groups",
+            "measures",
+        ]
         for key in view_keys:
             assert key in table_dictionary["view"]
+
+    def test_table_dictionary_measures(self, my_generic_table: GenericTable) -> None:
+        """Tests the structure of the `table_dictionary` attribute.
+
+        Verifies that the `table_dictionary` has the expected keys and structure.
+        """  # noqa: E501
+        table_dictionary = my_generic_table.table_dictionary
+        assert "view" in table_dictionary
+        assert "measures" in table_dictionary["view"]
 
 
 # TODO add tests to check the table_dictionary
