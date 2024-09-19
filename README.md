@@ -76,4 +76,4 @@ df2looker --source-path my_dataform_project/dataform-compile.json --verbose
 
 - The tool currently supports BigQuery as the underlying database for Dataform.
 - You might need to adjust the generated LookML code further to match your specific Looker project requirements.
-- This tool requires for the BigQuery table to exists, the reason is because Dataform doesn't provide schemas out of a compilation so it is not possible to know the schema of a table from the compilation alone.
+- This tool requires the BigQuery tables to exist, the reason is because Dataform doesn't provide schemas out of a compilation so it is not possible to know the schema of a table from the compilation alone.
