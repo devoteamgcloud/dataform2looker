@@ -60,16 +60,16 @@ File Saving: The generated LookML view files are saved to the specified target d
 
 Generating the LookML Views using multiple tags. This will generate only the views for the models that match the tags.
 
-```bash
 # Generate LookML views from a single file
-df2looker --source-path my_dataform_project/dataform-compile.json --target-dir my_looker_project/views --tags tag_1 tag_2
+```bash
+df2looker --source-file-path my_dataform_project/dataform-compile.json --target-dir my_looker_project/views --tags tag_1 tag_2
 ```
 
 Run Dataform2Looker in verbose mode
 
-```bash
 # Generate LookML views from a single file
-df2looker --source-path my_dataform_project/dataform-compile.json --verbose
+```bash
+df2looker --source-file-path my_dataform_project/dataform-compile.json --verbose
 ```
 
 ## Notes

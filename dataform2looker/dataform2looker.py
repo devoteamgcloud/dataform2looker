@@ -45,7 +45,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
 
     parser.add_argument(
-        "--source-file",
+        "--source-file-path",
         type=Path,
         help="Path to the views file or directory containing views.",
     )
@@ -64,7 +64,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument(
         "--tags",
         help="Filter to dataform models using this tag",
-        default=None,
+        default=[],
         type=str,
         nargs="+",
         required=False,
