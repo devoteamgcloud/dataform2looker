@@ -72,7 +72,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     args = parser.parse_args(argv)
 
-    source_file = args.source_file
+    source_file = args.source_file_path
     target_dir = args.target_dir
     verbose = args.verbose
     tags = args.tags

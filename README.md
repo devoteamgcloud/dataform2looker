@@ -30,16 +30,16 @@ The `--force-reinstall` flag makes certain that the newest iteration of the code
 
 You can use the following CLI commands to generate LookML models. This requires the JSON outpt of the Dataform project compilation
 
+#### Generate LookML views from a single file
 ```bash
-# Generate LookML views from a single file
-df2looker --source-path my_dataform_project/dataform-compile.json --target-dir my_looker_project/views
+df2looker --source-file-path my_dataform_project/dataform-compile.json --target-dir my_looker_project/views
 ```
 
 This command will read the dataform.json file, extract the schema information, and generate LookML view files in the my_looker_project/views directory.
 
 #### Command Line Arguments
 
-- `--source-path`: Path to the [Dataform compile model JSON file](https://cloud.google.com/dataform/docs/use-dataform-cli#view_compilation_output). This is a required argument.
+- `--source-file-path`: Path to the [Dataform compile model JSON file](https://cloud.google.com/dataform/docs/use-dataform-cli#view_compilation_output). This is a required argument.
 - `--target-dir`: Target directory for the output LookML files. Defaults to a folder called `views` in the current directory if not provided.
 - `--tags`: List of tags to filter the models.
 - `--verbose`: Enable verbose logging for debugging purposes.
@@ -60,14 +60,14 @@ File Saving: The generated LookML view files are saved to the specified target d
 
 Generating the LookML Views using multiple tags. This will generate only the views for the models that match the tags.
 
-# Generate LookML views from a single file
+#### Generate LookML views from a single file
 ```bash
 df2looker --source-file-path my_dataform_project/dataform-compile.json --target-dir my_looker_project/views --tags tag_1 tag_2
 ```
 
 Run Dataform2Looker in verbose mode
 
-# Generate LookML views from a single file
+#### Generate LookML views from a single file
 ```bash
 df2looker --source-file-path my_dataform_project/dataform-compile.json --verbose
 ```
