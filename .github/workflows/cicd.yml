@@ -1,0 +1,32 @@
+name: Test Federation
+
+on:
+  workflow_dispatch:
+    # Trigger only when files within specific folders change
+
+
+env:
+  orch-project: "federation-proj"
+
+jobs:
+  terraform-apply:
+    name: Terraform Apply 
+    runs-on: ubuntu-latest
+    # Use a matrix strategy to run the job for each changed folder
+
+    permissions:
+      contents: read
+      id-token: 'write'
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+            fetch-depth: 2  
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: '${{env.orch-project}}'
+          workload_identity_provider: 'projects/113864804372/locations/global/workloadIdentityPools/wlpool-githubiam/providers/wlprov-githubiam'
+          audience: base
+          service_account: sa-1-873@federation-proj.iam.gserviceaccount.com
