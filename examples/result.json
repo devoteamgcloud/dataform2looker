@@ -1,0 +1,365 @@
+{
+  "tables": [
+    {
+      "type": "table",
+      "target": {
+        "schema": "austin_bikeshare",
+        "name": "covid19_assertions",
+        "database": "df2looker-test-datasetsorm"
+      },
+      "query": "",
+      "disabled": false,
+      "fileName": "",
+      "tags": [
+        "assertions"
+      ],
+      "dependencyTargets": [
+        {
+          "schema": "covid19_ecdc_eu",
+          "name": "covid_19_geographic_distribution_worldwide",
+          "database": "bigquery-public-data"
+        }
+      ],
+      "canonicalTarget": {
+        "schema": "austin_bikeshare",
+        "name": "covid19_assertions",
+        "database": "df2looker-test-datasetsorm"
+      },
+      "enumType": "TABLE"
+    },
+    {
+      "type": "table",
+      "target": {
+        "schema": "austin_bikeshare",
+        "name": "covid19_dependency_assertions",
+        "database": "df2looker-test-datasetsorm"
+      },
+      "query": "",
+      "disabled": false,
+      "fileName": "",
+      "tags": [
+        "assertions"
+      ],
+      "dependencyTargets": [
+        {
+          "schema": "dataform_assertions",
+          "name": "covid19_declaration_assertions",
+          "database": "df2looker-test-datasetsorm"
+        },
+        {
+          "schema": "covid19_ecdc_eu",
+          "name": "covid_19_geographic_distribution_worldwide",
+          "database": "bigquery-public-data"
+        }
+      ],
+      "canonicalTarget": {
+        "schema": "austin_bikeshare",
+        "name": "covid19_dependency_assertions",
+        "database": "df2looker-test-datasetsorm"
+      },
+      "enumType": "TABLE"
+    },
+    {
+      "type": "table",
+      "target": {
+        "schema": "austin_bikeshare",
+        "name": "covid19_functions",
+        "database": "df2looker-test-datasetsorm"
+      },
+      "query": "",
+      "disabled": false,
+      "fileName": "",
+      "tags": [
+        "functions"
+      ],
+      "dependencyTargets": [
+        {
+          "schema": "covid19_ecdc_eu",
+          "name": "covid_19_geographic_distribution_worldwide",
+          "database": "bigquery-public-data"
+        }
+      ],
+      "canonicalTarget": {
+        "schema": "austin_bikeshare",
+        "name": "covid19_functions",
+        "database": "df2looker-test-datasetsorm"
+      },
+      "enumType": "TABLE"
+    },
+    {
+      "type": "table",
+      "target": {
+        "schema": "austin_bikeshare",
+        "name": "covid19_import_functions",
+        "database": "df2looker-test-datasetsorm"
+      },
+      "query": "",
+      "disabled": false,
+      "fileName": "",
+      "tags": [
+        "functions"
+      ],
+      "dependencyTargets": [
+        {
+          "schema": "covid19_ecdc_eu",
+          "name": "covid_19_geographic_distribution_worldwide",
+          "database": "bigquery-public-data"
+        }
+      ],
+      "canonicalTarget": {
+        "schema": "austin_bikeshare",
+        "name": "covid19_import_functions",
+        "database": "df2looker-test-datasetsorm"
+      },
+      "enumType": "TABLE"
+    },
+    {
+      "type": "table",
+      "target": {
+        "schema": "austin_bikeshare",
+        "name": "covid19_row_level_security",
+        "database": "df2looker-test-datasetsorm"
+      },
+      "query": "",
+      "disabled": false,
+      "fileName": "",
+      "tags": [
+        "policies"
+      ],
+      "dependencyTargets": [
+        {
+          "schema": "covid19_ecdc_eu",
+          "name": "covid_19_geographic_distribution_worldwide",
+          "database": "bigquery-public-data"
+        }
+      ],
+      "canonicalTarget": {
+        "schema": "austin_bikeshare",
+        "name": "covid19_row_level_security",
+        "database": "df2looker-test-datasetsorm"
+      },
+      "enumType": "TABLE"
+    },
+    {
+      "type": "table",
+      "target": {
+        "schema": "austin_bikeshare",
+        "name": "post_pre_operations",
+        "database": "df2looker-test-datasetsorm"
+      },
+      "query": "",
+      "disabled": false,
+      "fileName": "",
+      "tags": [
+        "operations"
+      ],
+      "dependencyTargets": [
+        {
+          "schema": "covid19_ecdc_eu",
+          "name": "covid_19_geographic_distribution_worldwide",
+          "database": "bigquery-public-data"
+        }
+      ],
+      "canonicalTarget": {
+        "schema": "austin_bikeshare",
+        "name": "post_pre_operations",
+        "database": "df2looker-test-datasetsorm"
+      },
+      "enumType": "TABLE"
+    }
+  ],
+  "assertions": [
+    {
+      "query": "",
+      "fileName": "",
+      "target": {
+        "schema": "dataform_assertions",
+        "name": "covid19_declaration_assertions",
+        "database": "df2looker-test-datasetsorm"
+      },
+      "tags": [
+        "assertions"
+      ],
+      "dependencyTargets": [
+        {
+          "schema": "covid19_ecdc_eu",
+          "name": "covid_19_geographic_distribution_worldwide",
+          "database": "bigquery-public-data"
+        }
+      ],
+      "canonicalTarget": {
+        "schema": "dataform_assertions",
+        "name": "covid19_declaration_assertions",
+        "database": "df2looker-test-datasetsorm"
+      }
+    },
+    {
+      "query": "",
+      "fileName": "",
+      "target": {
+        "schema": "dataform_assertions",
+        "name": "austin_bikeshare_covid19_assertions_assertions_uniqueKey_0",
+        "database": "df2looker-test-datasetsorm"
+      },
+      "tags": [
+        "assertions"
+      ],
+      "dependencyTargets": [
+        {
+          "schema": "austin_bikeshare",
+          "name": "covid19_assertions",
+          "database": "df2looker-test-datasetsorm"
+        }
+      ],
+      "canonicalTarget": {
+        "schema": "dataform_assertions",
+        "name": "austin_bikeshare_covid19_assertions_assertions_uniqueKey_0",
+        "database": "df2looker-test-datasetsorm"
+      },
+      "parentAction": {
+        "schema": "austin_bikeshare",
+        "name": "covid19_assertions",
+        "database": "df2looker-test-datasetsorm"
+      }
+    },
+    {
+      "query": "",
+      "fileName": "",
+      "target": {
+        "schema": "dataform_assertions",
+        "name": "austin_bikeshare_covid19_assertions_assertions_uniqueKey_1",
+        "database": "df2looker-test-datasetsorm"
+      },
+      "tags": [
+        "assertions"
+      ],
+      "dependencyTargets": [
+        {
+          "schema": "austin_bikeshare",
+          "name": "covid19_assertions",
+          "database": "df2looker-test-datasetsorm"
+        }
+      ],
+      "canonicalTarget": {
+        "schema": "dataform_assertions",
+        "name": "austin_bikeshare_covid19_assertions_assertions_uniqueKey_1",
+        "database": "df2looker-test-datasetsorm"
+      },
+      "parentAction": {
+        "schema": "austin_bikeshare",
+        "name": "covid19_assertions",
+        "database": "df2looker-test-datasetsorm"
+      }
+    },
+    {
+      "query": "",
+      "fileName": "",
+      "target": {
+        "schema": "dataform_assertions",
+        "name": "austin_bikeshare_covid19_assertions_assertions_rowConditions",
+        "database": "df2looker-test-datasetsorm"
+      },
+      "tags": [
+        "assertions"
+      ],
+      "dependencyTargets": [
+        {
+          "schema": "austin_bikeshare",
+          "name": "covid19_assertions",
+          "database": "df2looker-test-datasetsorm"
+        }
+      ],
+      "canonicalTarget": {
+        "schema": "dataform_assertions",
+        "name": "austin_bikeshare_covid19_assertions_assertions_rowConditions",
+        "database": "df2looker-test-datasetsorm"
+      },
+      "parentAction": {
+        "schema": "austin_bikeshare",
+        "name": "covid19_assertions",
+        "database": "df2looker-test-datasetsorm"
+      }
+    }
+  ],
+  "projectConfig": {
+    "warehouse": "bigquery",
+    "defaultSchema": "dataform",
+    "assertionSchema": "dataform_assertions",
+    "defaultDatabase": "df2looker-test-datasetsorm",
+    "defaultLocation": "EU"
+  },
+  "graphErrors": {},
+  "declarations": [
+    {
+      "target": {
+        "schema": "covid19_ecdc_eu",
+        "name": "covid_19_geographic_distribution_worldwide",
+        "database": "bigquery-public-data"
+      },
+      "fileName": "definitions/declarations/covid19_ecdc_eu/covid_19_geographic_distribution_worldwide.sqlx",
+      "canonicalTarget": {
+        "schema": "covid19_ecdc_eu",
+        "name": "covid_19_geographic_distribution_worldwide",
+        "database": "bigquery-public-data"
+      }
+    }
+  ],
+  "dataformCoreVersion": "3.0.0",
+  "targets": [
+    {
+      "schema": "dataform_assertions",
+      "name": "covid19_declaration_assertions",
+      "database": "df2looker-test-datasetsorm"
+    },
+    {
+      "schema": "covid19_ecdc_eu",
+      "name": "covid_19_geographic_distribution_worldwide",
+      "database": "bigquery-public-data"
+    },
+    {
+      "schema": "austin_bikeshare",
+      "name": "covid19_assertions",
+      "database": "df2looker-test-datasetsorm"
+    },
+    {
+      "schema": "dataform_assertions",
+      "name": "austin_bikeshare_covid19_assertions_assertions_uniqueKey_0",
+      "database": "df2looker-test-datasetsorm"
+    },
+    {
+      "schema": "dataform_assertions",
+      "name": "austin_bikeshare_covid19_assertions_assertions_uniqueKey_1",
+      "database": "df2looker-test-datasetsorm"
+    },
+    {
+      "schema": "dataform_assertions",
+      "name": "austin_bikeshare_covid19_assertions_assertions_rowConditions",
+      "database": "df2looker-test-datasetsorm"
+    },
+    {
+      "schema": "austin_bikeshare",
+      "name": "covid19_dependency_assertions",
+      "database": "df2looker-test-datasetsorm"
+    },
+    {
+      "schema": "austin_bikeshare",
+      "name": "covid19_functions",
+      "database": "df2looker-test-datasetsorm"
+    },
+    {
+      "schema": "austin_bikeshare",
+      "name": "covid19_import_functions",
+      "database": "df2looker-test-datasetsorm"
+    },
+    {
+      "schema": "austin_bikeshare",
+      "name": "covid19_row_level_security",
+      "database": "df2looker-test-datasetsorm"
+    },
+    {
+      "schema": "austin_bikeshare",
+      "name": "post_pre_operations",
+      "database": "df2looker-test-datasetsorm"
+    }
+  ]
+}

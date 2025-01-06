@@ -164,8 +164,5 @@ cython_debug/
 # views folder
 views
 
-# result.json
-result.json
-
 #vscode
 .vscode/
