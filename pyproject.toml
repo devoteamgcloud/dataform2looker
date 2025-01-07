@@ -1,3 +1,13 @@
+[project]
+name = "dataform2looker"
+dynamic = [ "version" ]
+
+[project.urls]
+Homepage = "https://github.com/devoteamgcloud/dataform2looker/"
+"Bug Tracker" = "https://github.com/devoteamgcloud/dataform2looker/issues"
+Documentation = "https://github.com/devoteamgcloud/dataform2looker/blob/main/README.md"
+"Source Code" = "https://github.com/devoteamgcloud/dataform2looker/"
+
 [tool]
 
 [tool.poetry]
@@ -31,12 +41,6 @@ pre-commit = "3.8.0"
 [build-system]
 build-backend = "poetry.masonry.api"
 requires = ["poetry>=1.8.3"]
-
-[project.urls]
-Homepage = "https://github.com/devoteamgcloud/dataform2looker/"
-"Bug Tracker" = "https://github.com/devoteamgcloud/dataform2looker/issues"
-Documentation = "https://github.com/devoteamgcloud/dataform2looker/blob/main/README.md"
-"Source Code" = "https://github.com/devoteamgcloud/dataform2looker/"
 
 [tool.poetry.dependencies]
 python = "^3.10"
