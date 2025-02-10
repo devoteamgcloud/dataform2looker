@@ -65,7 +65,7 @@ class Column:
             "name": self.name,
             "type": self.field_type,
             "description": self.description,
-            "sql": f"{{TABLE}}.{self.name}",
+            "sql": f"${{TABLE}}.{self.name}",
         }
         if self.dimension_type == "time_dimension_group":
             self.column_dictionary["datatype"] = self.data_type
