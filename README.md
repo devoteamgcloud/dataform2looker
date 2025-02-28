@@ -11,7 +11,7 @@ This command-line interface (CLI) tool helps you generate LookML view files from
 You can install the library using:
 
 ```bash
-pip install git+ssh://git@github.com:devoteamgcloud/dataform2looker.git --force-reinstall
+pip install git+ssh://git@github.com/devoteamgcloud/dataform2looker.git --force-reinstall
 ```
 
 OR
