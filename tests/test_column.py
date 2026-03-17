@@ -45,7 +45,7 @@ class TestColumn:
             "name": my_column_name,
             "type": my_field_type,
             "description": my_column_description,
-            "sql": f"{{TABLE}}.{my_column_name}",
+            "sql": f"${{TABLE}}.{my_column_name}",
         }
         assert my_column.column_dictionary == column_dictionary
 
@@ -67,9 +67,11 @@ class TestColumn:
     def test_invalid_field_type(self) -> None:
         """Tests the initialization of a `Column` object with an invalid field type.
 
-        Verifies that an `AssertionError` is raised when an invalid `field_type` is provided.
+        Verifies that an `InvalidFieldTypeError` is raised when an invalid `field_type` is provided.
         """  # noqa: E501
-        with raises(AssertionError):
+        from dataform2looker.exceptions import InvalidFieldTypeError
+
+        with raises(InvalidFieldTypeError):
             Column(
                 name="invalid_column",
                 description="Invalid column with unsupported type",
