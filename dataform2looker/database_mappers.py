@@ -72,76 +72,6 @@ class Column:
             self.column_dictionary["timeframes"] = self.time_frames
 
 
-class GenericTable:
-    """Base Table class for representing tables from different database types.
-
-    Attributes:
-        table_id (str): The full ID of the table in the database.
-        table_name (str): The name of the table (extracted from `table_id`).
-        dimensions (list[dict]): A list of dictionaries representing dimensions in the table.
-        dimension_group (list[dict]): A list of dictionaries representing time dimension groups.
-
-    Methods:
-        __init__(self, table_id: str, db_type: str) -> None:
-            Initializes the `GenericTable` object based on the `db_type`.
-            Currently supports only "bigquery" and raises an exception for other types.
-
-    Raises:
-        UnsupportedDatabaseTypeError: If an unsupported `db_type` is provided.
-    """  # noqa: E501
-
-    def __init__(self, table_id: str, db_type: str = "bigquery") -> None:
-        """Initializes the `GenericTable` object based on the database type.
-
-        Args:
-            table_id: The full ID of the table in the database.
-            db_type: The type of the database ("bigquery" currently supported).
-
-        Raises:
-            UnsupportedDatabaseTypeError: If an unsupported `db_type` is provided.
-        """  # noqa: E501
-        if db_type != "bigquery":
-            raise UnsupportedDatabaseTypeError(db_type)
-        self.__table = BigQueryTable(table_id)
-        self.table_id = table_id
-        self.table_name = self.__table.table_name
-        self.__db_type = db_type
-        # TODO implement self.description = self.__table.description
-        # This is not implemented at the moment lkml views don't support descriptions
-        # At the moment the dictionary for views and dimensions are built
-        # this is because the lkml lib requires the dict
-        # in case something different is used then we would need to
-        # re-factor the dictionary for GenericTable and Column
-        self.dimensions = [
-            column.column_dictionary
-            for column in self.__table.columns
-            if column.dimension_type == "dimension"
-        ]
-        logging.debug(f"Dimensions for table {self.table_name}: {self.dimensions}")
-        self.dimension_group = [
-            column.column_dictionary
-            for column in self.__table.columns
-            if column.dimension_type == "time_dimension_group"
-        ]
-        logging.debug(
-            f"Dimensions Group for table {self.table_name}: {self.dimension_group}"
-        )
-        self.measures = [{"type": "count", "name": "count"}]
-        # TODO it should be possible to include other measures by passing an argument
-        # Include measures if needed such as sums of all number dimensions
-        # include count_distinct
-
-        self.table_dictionary = {
-            "view": {
-                "name": f"{self.table_name}",
-                "sql_table_name": f"{table_id}",
-                "dimensions": self.dimensions,
-                "dimension_groups": self.dimension_group,
-                "measures": self.measures,
-            }
-        }
-
-
 class BigQueryTable:
     """Base Table class for representing BigQuery tables and their column information.
 
@@ -241,3 +171,79 @@ class BigQueryTable:
             for field in table.schema
         ]
         return columns
+
+
+class GenericTable:
+    """Base Table class for representing tables from different database types.
+
+    Attributes:
+        table_id (str): The full ID of the table in the database.
+        table_name (str): The name of the table (extracted from `table_id`).
+        dimensions (list[dict]): A list of dictionaries representing dimensions in the table.
+        dimension_group (list[dict]): A list of dictionaries representing time dimension groups.
+
+    Methods:
+        __init__(self, table_id: str, db_type: str) -> None:
+            Initializes the `GenericTable` object based on the `db_type`.
+            Uses a factory pattern to dynamically load the correct mapper.
+
+    Raises:
+        UnsupportedDatabaseTypeError: If an unsupported `db_type` is provided.
+    """  # noqa: E501
+
+    _MAPPERS = {
+        "bigquery": BigQueryTable,
+    }
+
+    def __init__(self, table_id: str, db_type: str = "bigquery") -> None:
+        """Initializes the `GenericTable` object based on the database type.
+
+        Args:
+            table_id: The full ID of the table in the database.
+            db_type: The type of the database ("bigquery" currently supported).
+
+        Raises:
+            UnsupportedDatabaseTypeError: If an unsupported `db_type` is provided.
+        """  # noqa: E501
+        mapper_class = self._MAPPERS.get(db_type)
+        if not mapper_class:
+            raise UnsupportedDatabaseTypeError(db_type)
+
+        self.__table = mapper_class(table_id)
+        self.table_id = table_id
+        self.table_name = self.__table.table_name
+        self.__db_type = db_type
+        # TODO implement self.description = self.__table.description
+        # This is not implemented at the moment lkml views don't support descriptions
+        # At the moment the dictionary for views and dimensions are built
+        # this is because the lkml lib requires the dict
+        # in case something different is used then we would need to
+        # re-factor the dictionary for GenericTable and Column
+        self.dimensions = [
+            column.column_dictionary
+            for column in self.__table.columns
+            if column.dimension_type == "dimension"
+        ]
+        logging.debug(f"Dimensions for table {self.table_name}: {self.dimensions}")
+        self.dimension_group = [
+            column.column_dictionary
+            for column in self.__table.columns
+            if column.dimension_type == "time_dimension_group"
+        ]
+        logging.debug(
+            f"Dimensions Group for table {self.table_name}: {self.dimension_group}"
+        )
+        self.measures = [{"type": "count", "name": "count"}]
+        # TODO it should be possible to include other measures by passing an argument
+        # Include measures if needed such as sums of all number dimensions
+        # include count_distinct
+
+        self.table_dictionary = {
+            "view": {
+                "name": f"{self.table_name}",
+                "sql_table_name": f"{table_id}",
+                "dimensions": self.dimensions,
+                "dimension_groups": self.dimension_group,
+                "measures": self.measures,
+            }
+        }
