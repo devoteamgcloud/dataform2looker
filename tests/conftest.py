@@ -75,4 +75,31 @@ def target_folder_path(request: FixtureRequest) -> str:
              defaulting to "tests/".
     """  # noqa: E501
     return request.config.getoption("--target_folder_path")
-    return request.config.getoption("--target_folder_path")
+
+
+@fixture(autouse=True)
+def mock_bigquery_client(mocker: FixtureRequest) -> None:
+    """Mock bigquery Client to prevent actual API calls during testing."""
+    from unittest.mock import MagicMock
+
+    mock_client = mocker.patch("dataform2looker.database_mappers.bigquery.Client")
+    mock_instance = mock_client.return_value
+
+    def get_table_side_effect(table_id: str) -> MagicMock:
+        mock_table = MagicMock()
+
+        mock_field1 = MagicMock()
+        mock_field1.name = "id"
+        mock_field1.description = "Primary Key"
+        mock_field1.field_type = "STRING"
+
+        mock_field2 = MagicMock()
+        mock_field2.name = "created_at"
+        mock_field2.description = "Creation date"
+        mock_field2.field_type = "TIMESTAMP"
+
+        mock_table.schema = [mock_field1, mock_field2]
+        return mock_table
+
+    mock_instance.get_table.side_effect = get_table_side_effect
+    return mock_instance
