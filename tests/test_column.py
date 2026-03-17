@@ -45,7 +45,7 @@ class TestColumn:
             "name": my_column_name,
             "type": my_field_type,
             "description": my_column_description,
-            "sql": f"{{TABLE}}.{my_column_name}",
+            "sql": f"${{TABLE}}.{my_column_name}",
         }
         assert my_column.column_dictionary == column_dictionary
 
