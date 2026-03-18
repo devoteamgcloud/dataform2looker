@@ -63,5 +63,17 @@ class TestGenericTable:
         assert "view" in table_dictionary
         assert "measures" in table_dictionary["view"]
 
+    def test_gen_extra_measures(self, bq_table_id: str) -> None:
+        """Tests that extra measures are generated when `gen_extra_measures` is True."""
+        table = GenericTable(bq_table_id, gen_extra_measures=True)
+        measures = table.table_dictionary["view"]["measures"]
+
+        # Should have count + sum for number columns + count_distinct for all dimensions
+        # In the mock data, let's see what we have.
+        # From conftest.py or dataform_result.json
+        assert any(m["type"] == "sum" for m in measures)
+        assert any(m["type"] == "count_distinct" for m in measures)
+        assert any(m["name"] == "count" for m in measures)
+
 
 # TODO add tests to check the table_dictionary

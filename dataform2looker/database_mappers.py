@@ -90,12 +90,18 @@ class GenericTable:
         UnsupportedDatabaseTypeError: If an unsupported `db_type` is provided.
     """  # noqa: E501
 
-    def __init__(self, table_id: str, db_type: str = "bigquery") -> None:
+    def __init__(
+        self,
+        table_id: str,
+        db_type: str = "bigquery",
+        gen_extra_measures: bool = False,
+    ) -> None:
         """Initializes the `GenericTable` object based on the database type.
 
         Args:
             table_id: The full ID of the table in the database.
             db_type: The type of the database ("bigquery" currently supported).
+            gen_extra_measures: Whether to generate extra measures (e.g., sums, count_distinct).
 
         Raises:
             UnsupportedDatabaseTypeError: If an unsupported `db_type` is provided.
@@ -127,9 +133,23 @@ class GenericTable:
             f"Dimensions Group for table {self.table_name}: {self.dimension_group}"
         )
         self.measures = [{"type": "count", "name": "count"}]
-        # TODO it should be possible to include other measures by passing an argument
-        # Include measures if needed such as sums of all number dimensions
-        # include count_distinct
+        if gen_extra_measures:
+            for column in self.__table.columns:
+                if (
+                    column.dimension_type == "dimension"
+                    and column.field_type == "number"
+                ):
+                    self.measures.append({
+                        "type": "sum",
+                        "name": f"total_{column.name}",
+                        "sql": f"${{TABLE}}.{column.name}",
+                    })
+                if column.dimension_type == "dimension":
+                    self.measures.append({
+                        "type": "count_distinct",
+                        "name": f"count_distinct_{column.name}",
+                        "sql": f"${{TABLE}}.{column.name}",
+                    })
 
         self.table_dictionary = {
             "view": {
