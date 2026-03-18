@@ -1,4 +1,4 @@
-"""Test configuraitons."""
+"""Test configurations."""
 
 from pytest import FixtureRequest, Parser, fixture
 

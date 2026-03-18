@@ -1,58 +1,58 @@
 {
-  "tables": [
-    {
-      "type": "table",
-      "target": {
-        "schema": "chicago_taxi_trips",
-        "name": "taxi_trips",
-        "database": "bigquery-public-data"
-      },
-      "query": "\n\n SELECT 1 \n",
-      "disabled": false,
-      "fileName": "",
-      "tags": [
-        "tag1"
-      ],
-      "dependencyTargets": [],
-      "canonicalTarget": {
-        "schema": "chicago_taxi_trips",
-        "name": "taxi_trips",
-        "database": "bigquery-public-data"
-      },
-      "enumType": "TABLE"
+    "assertions": [],
+    "dataformCoreVersion": "3.0.0",
+    "declarations": [],
+    "graphErrors": {},
+    "projectConfig": {
+        "assertionSchema": "chicago_taxi_trips",
+        "defaultDatabase": "bigquery-public-data",
+        "defaultLocation": "EU",
+        "defaultSchema": "chicago_taxi_trips",
+        "warehouse": "bigquery"
     },
-    {
-      "type": "table",
-      "target": {
-        "schema": "chicago_crime",
-        "name": "crime",
-        "database": "bigquery-public-data"
-      },
-      "query": "\n\n SELECT 1 \n",
-      "disabled": false,
-      "fileName": "",
-      "tags": [
-        "tag2"
-      ],
-      "dependencyTargets": [],
-      "canonicalTarget": {
-        "schema": "chicago_crime",
-        "name": "crime",
-        "database": "bigquery-public-data"
-      },
-      "enumType": "TABLE"
-    }
-  ],
-  "assertions": [],
-  "projectConfig": {
-    "warehouse": "bigquery",
-    "defaultSchema": "chicago_taxi_trips",
-    "assertionSchema": "chicago_taxi_trips",
-    "defaultDatabase": "bigquery-public-data",
-    "defaultLocation": "EU"
-  },
-  "graphErrors": {},
-  "declarations": [],
-  "dataformCoreVersion": "3.0.0",
-  "targets": []
+    "tables": [
+        {
+            "canonicalTarget": {
+                "database": "bigquery-public-data",
+                "name": "taxi_trips",
+                "schema": "chicago_taxi_trips"
+            },
+            "dependencyTargets": [],
+            "disabled": false,
+            "enumType": "TABLE",
+            "fileName": "",
+            "query": "\n\n SELECT 1 \n",
+            "tags": [
+                "tag1"
+            ],
+            "target": {
+                "database": "bigquery-public-data",
+                "name": "taxi_trips",
+                "schema": "chicago_taxi_trips"
+            },
+            "type": "table"
+        },
+        {
+            "canonicalTarget": {
+                "database": "bigquery-public-data",
+                "name": "crime",
+                "schema": "chicago_crime"
+            },
+            "dependencyTargets": [],
+            "disabled": false,
+            "enumType": "TABLE",
+            "fileName": "",
+            "query": "\n\n SELECT 1 \n",
+            "tags": [
+                "tag2"
+            ],
+            "target": {
+                "database": "bigquery-public-data",
+                "name": "crime",
+                "schema": "chicago_crime"
+            },
+            "type": "table"
+        }
+    ],
+    "targets": []
 }

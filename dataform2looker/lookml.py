@@ -45,7 +45,7 @@ class LookML:
     def save_lookml_views(self) -> None:
         """Generates and saves LookML view files for each table."""  # noqa: E501
         for table_name, table_template in self.lookml_templates.items():
-            file_path = f"{self.target_folder_path}/" f"{table_name}.view.lkml"
+            file_path = f"{self.target_folder_path}/{table_name}.view.lkml"
             logging.debug(f"Creating file {file_path}")
             with open(file_path, "w") as f:
                 f.write(table_template)
