@@ -1,5 +1,8 @@
 """This module contains unit tests for the `LookML` class from the `dataform2looker.lookml` module."""  # noqa: E501
 
+import os
+import shutil
+
 import pytest
 
 from dataform2looker.lookml import LookML
@@ -57,6 +60,33 @@ class TestLookML:
   """.strip()
                 in view.strip()
             )
+
+    def test_extra_measure_generation(
+        self, source_json_path: str, target_folder_path: str
+    ) -> None:
+        """Tests that extra measures are generated in LookML templates."""
+        my_lookml = LookML(
+            source_json_path, target_folder_path, gen_extra_measures=True
+        )
+        for view in my_lookml.lookml_templates.values():
+            assert "type: sum" in view
+            assert "type: count_distinct" in view
+
+    def test_save_lookml_views_creates_folder(
+        self, source_json_path: str, tmp_path: str
+    ) -> None:
+        """Tests folder creation in `save_lookml_views`."""
+        target_folder = os.path.join(tmp_path, "new_views_folder")
+        if os.path.exists(target_folder):
+            shutil.rmtree(target_folder)
+
+        lookml = LookML(source_json_path, target_folder)
+        lookml.save_lookml_views()
+
+        assert os.path.exists(target_folder)
+        assert os.path.isdir(target_folder)
+        # Check if files were created
+        assert len(os.listdir(target_folder)) == 2
 
 
 # TODO include a test for the generated template
