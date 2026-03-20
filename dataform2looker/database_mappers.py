@@ -4,7 +4,11 @@ import logging
 
 from google.cloud import bigquery
 
-from dataform2looker.exceptions import UnsupportedDatabaseTypeError
+from dataform2looker.exceptions import (
+    InvalidFieldTypeError,
+    TableNotFoundError,
+    UnsupportedDatabaseTypeError,
+)
 
 
 class Column:
@@ -48,6 +52,9 @@ class Column:
             data_type: The original database data type of the column.
             time_frames: A list of timeframes for time dimension groups (optional).
 
+        Raises:
+            InvalidFieldTypeError: If an unsupported field type is provided.
+
         Sets the attributes and constructs the `column_dictionary` for Looker integration.
         If the column is a time dimension group, it adds `timeframes` and `datatype` to the dictionary.
         """  # noqa: E501
@@ -56,10 +63,11 @@ class Column:
         self.field_type = field_type
         self.data_type = data_type
         self.time_frames = time_frames
-        assert (
-            self.field_type in self._DIMENSION_TYPE_MAP
-        ), f"Invalid field type, use one of {self._DIMENSION_TYPE_MAP.keys()},\
-            got {self.field_type}"
+        if self.field_type not in self._DIMENSION_TYPE_MAP:
+            raise InvalidFieldTypeError(
+                field_type=self.field_type,
+                allowed_types=list(self._DIMENSION_TYPE_MAP.keys()),
+            )
         self.dimension_type = self._DIMENSION_TYPE_MAP[self.field_type]
         self.column_dictionary = {
             "name": self.name,
@@ -224,11 +232,19 @@ class BigQueryTable:
         This method connects to BigQuery, fetches the schema of the table identified by `self.table_id`,
         and constructs a list of `Column` objects representing each field in the table.
 
+        Raises:
+            TableNotFoundError: If the table is not found or cannot be retrieved.
+
         Returns:
             list[Column]: A list of `Column` objects, each representing a column in the BigQuery table.
         """  # noqa: E501
         client = bigquery.Client()
-        table = client.get_table(self.table_id)
+        try:
+            table = client.get_table(self.table_id)
+        except Exception as e:
+            logging.error(f"Failed to retrieve table '{self.table_id}': {e}")
+            raise TableNotFoundError(self.table_id) from e
+
         logging.debug(f"Got table schema from table {self.table_id}")
         columns = [
             Column(

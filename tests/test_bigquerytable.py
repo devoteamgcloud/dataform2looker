@@ -26,5 +26,18 @@ class TestBigQueryTable:
         assert my_bq_table.table_name == bq_table_id.split(".")[-1]
         assert isinstance(my_bq_table.columns, list)
 
+    def test_table_not_found(self, mocker: pytest.FixtureRequest) -> None:
+        """Tests that a TableNotFoundError is raised when table is not found."""
+        from dataform2looker.exceptions import TableNotFoundError
+
+        mock_client_class = mocker.patch(
+            "dataform2looker.database_mappers.bigquery.Client"
+        )
+        mock_client_instance = mock_client_class.return_value
+        mock_client_instance.get_table.side_effect = Exception("Not found")
+
+        with pytest.raises(TableNotFoundError):
+            BigQueryTable("non.existent.table")
+
 
 # TODO add other tests for BigQueryTable class.
