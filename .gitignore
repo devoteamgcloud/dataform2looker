@@ -171,3 +171,4 @@ result.json
 .vscode/
 
 .DS_Store
+.envrc
