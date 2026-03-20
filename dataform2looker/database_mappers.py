@@ -98,12 +98,15 @@ class GenericTable:
         UnsupportedDatabaseTypeError: If an unsupported `db_type` is provided.
     """  # noqa: E501
 
-    def __init__(self, table_id: str, db_type: str = "bigquery") -> None:
+    def __init__(
+        self, table_id: str, db_type: str = "bigquery", dataform_table: dict = None
+    ) -> None:
         """Initializes the `GenericTable` object based on the database type.
 
         Args:
             table_id: The full ID of the table in the database.
             db_type: The type of the database ("bigquery" currently supported).
+            dataform_table: Optional dataform table dictionary containing metadata.
 
         Raises:
             UnsupportedDatabaseTypeError: If an unsupported `db_type` is provided.
@@ -114,30 +117,51 @@ class GenericTable:
         self.table_id = table_id
         self.table_name = self.__table.table_name
         self.__db_type = db_type
-        # TODO implement self.description = self.__table.description
-        # This is not implemented at the moment lkml views don't support descriptions
-        # At the moment the dictionary for views and dimensions are built
-        # this is because the lkml lib requires the dict
-        # in case something different is used then we would need to
-        # re-factor the dictionary for GenericTable and Column
-        self.dimensions = [
-            column.column_dictionary
-            for column in self.__table.columns
-            if column.dimension_type == "dimension"
-        ]
+
+        column_descriptions = {}
+        if dataform_table and "actionDescriptor" in dataform_table:
+            # We can store the table_description if needed later for view description
+            self.description = dataform_table["actionDescriptor"].get("description", "")
+            for col in dataform_table["actionDescriptor"].get("columns", []):
+                col_name = ".".join(col["path"])
+                column_descriptions[col_name] = col.get("description", "")
+
+        self.dimensions = []
+        for column in self.__table.columns:
+            if column.dimension_type == "dimension":
+                col_dict = column.column_dictionary.copy()
+                if col_dict["name"] in column_descriptions:
+                    col_dict["description"] = column_descriptions[col_dict["name"]]
+                self.dimensions.append(col_dict)
+
         logging.debug(f"Dimensions for table {self.table_name}: {self.dimensions}")
-        self.dimension_group = [
-            column.column_dictionary
-            for column in self.__table.columns
-            if column.dimension_type == "time_dimension_group"
-        ]
+
+        self.dimension_group = []
+        for column in self.__table.columns:
+            if column.dimension_type == "time_dimension_group":
+                col_dict = column.column_dictionary.copy()
+                if col_dict["name"] in column_descriptions:
+                    col_dict["description"] = column_descriptions[col_dict["name"]]
+                self.dimension_group.append(col_dict)
         logging.debug(
             f"Dimensions Group for table {self.table_name}: {self.dimension_group}"
         )
         self.measures = [{"type": "count", "name": "count"}]
-        # TODO it should be possible to include other measures by passing an argument
-        # Include measures if needed such as sums of all number dimensions
-        # include count_distinct
+        for dim in self.dimensions:
+            if dim["type"] == "number":
+                dim_name = dim["name"]
+                self.measures.append({
+                    "type": "sum",
+                    "name": f"total_{dim_name}",
+                    "sql": f"${{{dim_name}}}",
+                    "description": f"Total of {dim_name}",
+                })
+                self.measures.append({
+                    "type": "average",
+                    "name": f"average_{dim_name}",
+                    "sql": f"${{{dim_name}}}",
+                    "description": f"Average of {dim_name}",
+                })
 
         self.table_dictionary = {
             "view": {
@@ -246,14 +270,25 @@ class BigQueryTable:
             raise TableNotFoundError(self.table_id) from e
 
         logging.debug(f"Got table schema from table {self.table_id}")
-        columns = [
-            Column(
-                name=field.name,
-                description=field.description,
-                field_type=self._LOOKER_TYPE_MAP[field.field_type],
-                data_type=field.field_type.lower(),
-                time_frames=self._TIME_FRAMES_MAP.get(field.field_type, None),
-            )
-            for field in table.schema
-        ]
+        columns = []
+
+        def process_fields(fields: list, prefix: str = "") -> None:
+            for field in fields:
+                name = f"{prefix}{field.name}"
+                if field.field_type == "RECORD":
+                    process_fields(field.fields, prefix=f"{name}.")
+                else:
+                    looker_type = self._LOOKER_TYPE_MAP.get(field.field_type, "string")
+                    time_frames = self._TIME_FRAMES_MAP.get(field.field_type, None)
+                    columns.append(
+                        Column(
+                            name=name,
+                            description=field.description,
+                            field_type=looker_type,
+                            data_type=field.field_type.lower(),
+                            time_frames=time_frames,
+                        )
+                    )
+
+        process_fields(table.schema)
         return columns

@@ -10,20 +10,37 @@ from pathlib import Path
 from dataform2looker.lookml import LookML
 
 
-def _generate_view(path_to_json_file: str, target_dir: str, tags: set[str]) -> int:
+def _generate_view(
+    path_to_json_file: str,
+    target_dir: str,
+    tags: set[str],
+    global_labels: dict[str, str] = None,
+    global_group_labels: dict[str, str] = None,
+    custom_timeframes: list[str] = None,
+) -> int:
     """Generates LookML view files from a Dataform model.
 
     Args:
         path_to_json_file (str): Path to the JSON file from compiled Dataform project.
         target_dir (str): Target directory for Looker views.
         tags (set[str]): Filter to dataform models using this tag.
+        global_labels (dict[str, str]): Global labels to apply.
+        global_group_labels (dict[str, str]): Global group labels to apply.
+        custom_timeframes (list[str]): Custom timeframes for dimension groups.
 
     Returns:
         int: 0 if the view generation was successful, 1 otherwise.
     """
     logging.info(f" Generating views from: {path_to_json_file}")
     try:
-        lookml_object = LookML(path_to_json_file, target_dir, tags=tags)
+        lookml_object = LookML(
+            path_to_json_file,
+            target_dir,
+            tags=tags,
+            global_labels=global_labels,
+            global_group_labels=global_group_labels,
+            custom_timeframes=custom_timeframes,
+        )
         lookml_object.save_lookml_views()
         return 0
     except subprocess.CalledProcessError as e:
@@ -70,6 +87,28 @@ def main(argv: Sequence[str] | None = None) -> int:
         required=False,
     )
 
+    parser.add_argument(
+        "--global-labels",
+        help="Global labels to apply (key=value format, can be used multiple times)",
+        action="append",
+        default=[],
+    )
+
+    parser.add_argument(
+        "--global-group-labels",
+        help="Global group labels to apply (key=value, multiple allowed)",
+        action="append",
+        default=[],
+    )
+
+    parser.add_argument(
+        "--custom-timeframes",
+        help="Custom timeframes to use for dimension groups",
+        default=[],
+        type=str,
+        nargs="+",
+    )
+
     args = parser.parse_args(argv)
 
     source_file = args.source_file_path
@@ -77,10 +116,23 @@ def main(argv: Sequence[str] | None = None) -> int:
     verbose = args.verbose
     tags = args.tags
 
+    global_labels = dict(item.split("=") for item in args.global_labels if "=" in item)
+    global_group_labels = dict(
+        item.split("=") for item in args.global_group_labels if "=" in item
+    )
+    custom_timeframes = args.custom_timeframes
+
     logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO)
 
     if source_file.is_file():
         logging.info(f" Processing file: {source_file}")
-        return _generate_view(str(source_file), str(target_dir), set(tags))
+        return _generate_view(
+            str(source_file),
+            str(target_dir),
+            set(tags),
+            global_labels=global_labels,
+            global_group_labels=global_group_labels,
+            custom_timeframes=custom_timeframes,
+        )
     logging.error("The provided path is not taking to a JSON file")
     sys.exit(1)
