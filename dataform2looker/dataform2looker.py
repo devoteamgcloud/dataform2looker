@@ -10,20 +10,28 @@ from pathlib import Path
 from dataform2looker.lookml import LookML
 
 
-def _generate_view(path_to_json_file: str, target_dir: str, tags: set[str]) -> int:
+def _generate_view(
+    path_to_json_file: str, target_dir: str, tags: set[str], gen_extra_measures: bool
+) -> int:
     """Generates LookML view files from a Dataform model.
 
     Args:
         path_to_json_file (str): Path to the JSON file from compiled Dataform project.
         target_dir (str): Target directory for Looker views.
         tags (set[str]): Filter to dataform models using this tag.
+        gen_extra_measures (bool): Whether to generate extra measures.
 
     Returns:
         int: 0 if the view generation was successful, 1 otherwise.
     """
     logging.info(f" Generating views from: {path_to_json_file}")
     try:
-        lookml_object = LookML(path_to_json_file, target_dir, tags=tags)
+        lookml_object = LookML(
+            path_to_json_file,
+            target_dir,
+            tags=tags,
+            gen_extra_measures=gen_extra_measures,
+        )
         lookml_object.save_lookml_views()
         return 0
     except subprocess.CalledProcessError as e:
@@ -70,17 +78,26 @@ def main(argv: Sequence[str] | None = None) -> int:
         required=False,
     )
 
+    parser.add_argument(
+        "--gen-extra-measures",
+        action="store_true",
+        help="Generate extra measures like sum and count distinct.",
+    )
+
     args = parser.parse_args(argv)
 
     source_file = args.source_file_path
     target_dir = args.target_dir
     verbose = args.verbose
     tags = args.tags
+    gen_extra_measures = args.gen_extra_measures
 
     logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO)
 
     if source_file.is_file():
         logging.info(f" Processing file: {source_file}")
-        return _generate_view(str(source_file), str(target_dir), set(tags))
+        return _generate_view(
+            str(source_file), str(target_dir), set(tags), gen_extra_measures
+        )
     logging.error("The provided path is not taking to a JSON file")
     sys.exit(1)

@@ -2,6 +2,7 @@
 
 import json
 import logging
+import os
 
 import lkml
 
@@ -25,6 +26,7 @@ class LookML:
         target_folder_path: str,
         db_type: str = "bigquery",
         tags: list[str] = None,
+        gen_extra_measures: bool = False,
     ) -> None:
         """Initializes the `LookML` object.
 
@@ -33,10 +35,12 @@ class LookML:
             target_folder_path: The target folder for LookML view files.
             db_type: The type of the database ("bigquery" currently supported).
             tags: A list of tags to filter tables (not yet implemented).
+            gen_extra_measures: Whether to generate extra measures.
         """  # noqa: E501
         self.source_json_path = source_json_path
         self.db_type = db_type
         self.tags = set(tags or [])
+        self.gen_extra_measures = gen_extra_measures
         self.__tables_ids = self.__get_list_of_table_ids()
         self.__tables_list = self.__initialize_tables(self.__tables_ids)
         self.lookml_templates = self.__generate_lookml_templates(self.__tables_list)
@@ -44,6 +48,7 @@ class LookML:
 
     def save_lookml_views(self) -> None:
         """Generates and saves LookML view files for each table."""  # noqa: E501
+        os.makedirs(self.target_folder_path, exist_ok=True)
         for table_name, table_template in self.lookml_templates.items():
             file_path = f"{self.target_folder_path}/" f"{table_name}.view.lkml"
             logging.debug(f"Creating file {file_path}")
@@ -84,7 +89,10 @@ class LookML:
         Returns:
             A list of `GenericTable` objects representing the tables.
         """  # noqa: E501
-        tables_list = [GenericTable(table_id, self.db_type) for table_id in tables_ids]
+        tables_list = [
+            GenericTable(table_id, self.db_type, self.gen_extra_measures)
+            for table_id in tables_ids
+        ]
         return tables_list
 
     def __get_list_of_table_ids(self) -> list[str]:
