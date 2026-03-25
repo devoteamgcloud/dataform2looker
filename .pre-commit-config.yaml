@@ -1,35 +1,45 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v6.0.0
     hooks:
-      - id: check-added-large-files
-      - id: check-case-conflict
-      - id: check-json
-      - id: check-symlinks
-      - id: check-yaml
-      - id: destroyed-symlinks
-      - id: detect-private-key
-      - id: end-of-file-fixer
-      - id: fix-byte-order-marker
       - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-ast
+      - id: check-case-conflict
+      - id: check-docstring-first
+      - id: check-json
+      - id: check-yaml
+      - id: debug-statements
+      - id: detect-private-key
       - id: mixed-line-ending
-        args: [--fix=auto]
       - id: pretty-format-json
-        args: [--autofix, --no-sort-keys]
+        args: [--autofix, --indent, "4"]
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.5.5
+    hooks:
+      - id: remove-crlf
+      - id: forbid-crlf
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.37.1
+    hooks:
+      - id: yamllint
+        args: ["-d {extends: relaxed, rules: {line-length: disable}}", "-s"]
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.6.4
+    rev: v0.14.6
     hooks:
       - id: ruff
         args: [ --fix ]
       - id: ruff-format
   - repo: https://github.com/crate-ci/typos
-    rev: v1.24.5
+    rev: v1.39.2
     hooks:
       - id: typos
-  -   repo: https://github.com/python-poetry/poetry
-      rev: '1.8.3'
-      hooks:
-      -   id: poetry-check
-      -   id: poetry-lock
-      -   id: poetry-export
-      -   id: poetry-install
+  - repo: https://github.com/python-poetry/poetry
+    rev: '1.8.3'
+    hooks:
+      - id: poetry-check
+      - id: poetry-lock
+      - id: poetry-export
+      - id: poetry-install
