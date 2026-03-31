@@ -1,5 +1,7 @@
 # dataform2looker
 
+> **Note: This project is discontinued. We recommend using [dwh2looker](https://github.com/devoteamgcloud/dwh2looker/tree/main) instead. dwh2looker includes all the features of df2looker and more.**
+
 This repository provides a tool to generate LookML models from Dataform models.
 
 This command-line interface (CLI) tool helps you generate LookML view files from your Dataform models. It simplifies the process of integrating your Dataform data definitions with Looker for analysis and visualization. The tool requires the Dataform compilation JSON output
